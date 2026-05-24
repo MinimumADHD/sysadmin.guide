@@ -1,0 +1,2961 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guida Completa del Sistemista — 1°, 2° e 3° Livello</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;600;700;900&family=Playfair+Display:wght@700;900&display=swap');
+
+    :root {
+      --bg: #0a0e1a;
+      --bg2: #0f1628;
+      --bg3: #141d35;
+      --panel: #1a2540;
+      --panel2: #1f2d4a;
+      --accent: #00d4ff;
+      --accent2: #7b5ea7;
+      --accent3: #ff6b35;
+      --green: #00ff9d;
+      --yellow: #ffd700;
+      --red: #ff4757;
+      --text: #e8edf5;
+      --text2: #a0aec0;
+      --border: rgba(0, 212, 255, 0.15);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    /* NAVIGATION */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(10, 14, 26, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      overflow-x: auto;
+    }
+
+    nav a {
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+      transition: all 0.2s;
+      text-transform: uppercase;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+      background: rgba(0, 212, 255, 0.1);
+    }
+
+    nav .logo {
+      color: var(--accent);
+      font-weight: 900;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      margin-right: 1rem;
+    }
+
+    /* COVER */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: radial-gradient(ellipse at 30% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 20%, rgba(123, 94, 167, 0.1) 0%, transparent 50%),
+        var(--bg);
+      padding: 6rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.4rem 1.2rem;
+      border-radius: 100px;
+      margin-bottom: 2rem;
+    }
+
+    .cover h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, #7b5ea7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cover-sub {
+      font-size: 1.2rem;
+      color: var(--text2);
+      max-width: 700px;
+      margin-bottom: 3rem;
+      font-weight: 300;
+    }
+
+    .cover-pills {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    .pill {
+      padding: 0.5rem 1.2rem;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .pill-1 {
+      background: rgba(0, 255, 157, 0.1);
+      border-color: rgba(0, 255, 157, 0.4);
+      color: var(--green);
+    }
+
+    .pill-2 {
+      background: rgba(0, 212, 255, 0.1);
+      border-color: rgba(0, 212, 255, 0.4);
+      color: var(--accent);
+    }
+
+    .pill-3 {
+      background: rgba(255, 107, 53, 0.1);
+      border-color: rgba(255, 107, 53, 0.4);
+      color: var(--accent3);
+    }
+
+    .cover-stats {
+      display: flex;
+      gap: 3rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-lbl {
+      font-size: 0.75rem;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* SECTIONS */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+      scroll-margin-top: 70px;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 2rem 0 0.8rem;
+      letter-spacing: 0.02em;
+    }
+
+    h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--yellow);
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    p {
+      color: var(--text2);
+      margin-bottom: 1rem;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 3rem 0;
+    }
+
+    /* CARDS */
+    .card-grid {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      margin: 2rem 0;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 212, 255, 0.35);
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .card h4 {
+      margin-top: 0;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+    }
+
+    /* CODE BLOCKS */
+    .code-comparison {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr 1fr;
+      margin: 1.5rem 0;
+    }
+
+    @media(max-width:700px) {
+      .code-comparison {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .code-block {
+      background: #060a14;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .code-header.win {
+      background: rgba(0, 120, 212, 0.2);
+      border-bottom: 1px solid rgba(0, 120, 212, 0.3);
+      color: #4fc3f7;
+    }
+
+    .code-header.linux {
+      background: rgba(0, 255, 157, 0.08);
+      border-bottom: 1px solid rgba(0, 255, 157, 0.25);
+      color: var(--green);
+    }
+
+    .code-header.both {
+      background: rgba(123, 94, 167, 0.15);
+      border-bottom: 1px solid rgba(123, 94, 167, 0.3);
+      color: #ce93d8;
+    }
+
+    .code-header .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .code-header.win .dot {
+      background: #4fc3f7;
+    }
+
+    .code-header.linux .dot {
+      background: var(--green);
+    }
+
+    .code-header.both .dot {
+      background: #ce93d8;
+    }
+
+    pre {
+      padding: 1rem 1.2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: #a8c5da;
+      overflow-x: auto;
+    }
+
+    pre .cmd {
+      color: #e8edf5;
+    }
+
+    pre .cmt {
+      color: #4a6741;
+    }
+
+    pre .kw {
+      color: var(--accent);
+    }
+
+    pre .str {
+      color: #ffd700;
+    }
+
+    pre .val {
+      color: var(--accent3);
+    }
+
+    /* LEVELS DIAGRAM */
+    .levels-diagram {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 2rem 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .level-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      min-height: 100px;
+    }
+
+    .level-badge {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
+
+    .level-badge .lnum {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2rem;
+    }
+
+    .level-badge .ltxt {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .level-1 {
+      background: rgba(0, 255, 157, 0.12);
+      color: var(--green);
+      border-right: 2px solid var(--green);
+    }
+
+    .level-2 {
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--accent);
+      border-right: 2px solid var(--accent);
+    }
+
+    .level-3 {
+      background: rgba(255, 107, 53, 0.1);
+      color: var(--accent3);
+      border-right: 2px solid var(--accent3);
+    }
+
+    .level-content {
+      padding: 1.5rem;
+      background: var(--panel2);
+    }
+
+    .level-content h4 {
+      margin-top: 0;
+      font-size: 1rem;
+    }
+
+    .level-content p {
+      font-size: 0.88rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.7rem;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .tag-green {
+      background: rgba(0, 255, 157, 0.12);
+      color: var(--green);
+      border: 1px solid rgba(0, 255, 157, 0.3);
+    }
+
+    .tag-blue {
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(0, 212, 255, 0.25);
+    }
+
+    .tag-orange {
+      background: rgba(255, 107, 53, 0.1);
+      color: var(--accent3);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+    }
+
+    /* TOPOLOGY MAP */
+    .topo-map {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 2rem 0;
+      overflow-x: auto;
+    }
+
+    .topo-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      min-width: 600px;
+    }
+
+    .topo-row {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .topo-node {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.8rem 1.2rem;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      min-width: 100px;
+      position: relative;
+    }
+
+    .topo-node.internet {
+      border-color: rgba(255, 107, 53, 0.5);
+      color: var(--accent3);
+      background: rgba(255, 107, 53, 0.08);
+    }
+
+    .topo-node.fw {
+      border-color: rgba(255, 71, 87, 0.5);
+      color: var(--red);
+      background: rgba(255, 71, 87, 0.08);
+    }
+
+    .topo-node.core {
+      border-color: rgba(0, 212, 255, 0.5);
+      color: var(--accent);
+      background: rgba(0, 212, 255, 0.08);
+    }
+
+    .topo-node.server {
+      border-color: rgba(0, 255, 157, 0.4);
+      color: var(--green);
+      background: rgba(0, 255, 157, 0.07);
+    }
+
+    .topo-node.client {
+      border-color: rgba(255, 215, 0, 0.3);
+      color: var(--yellow);
+      background: rgba(255, 215, 0, 0.06);
+    }
+
+    .topo-arrow {
+      color: var(--text2);
+      font-size: 1.2rem;
+      line-height: 1;
+      margin: 0.3rem 0;
+    }
+
+    .topo-line {
+      width: 2px;
+      height: 30px;
+      margin: 0 auto;
+      background: linear-gradient(var(--border), transparent);
+    }
+
+    /* PROCESS TABLE */
+    .proc-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+
+    .proc-table th {
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.8rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .proc-table td {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.88rem;
+      vertical-align: top;
+    }
+
+    .proc-table td:first-child {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .proc-table td:not(:first-child) {
+      color: var(--text2);
+    }
+
+    .proc-table tr:hover td {
+      background: rgba(0, 212, 255, 0.03);
+    }
+
+    /* ALERT BOXES */
+    .alert {
+      border-left: 3px solid;
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    .alert-info {
+      border-color: var(--accent);
+      background: rgba(0, 212, 255, 0.06);
+      color: var(--text);
+    }
+
+    .alert-warn {
+      border-color: var(--yellow);
+      background: rgba(255, 215, 0, 0.06);
+      color: var(--text);
+    }
+
+    .alert-danger {
+      border-color: var(--red);
+      background: rgba(255, 71, 87, 0.06);
+      color: var(--text);
+    }
+
+    .alert-tip {
+      border-color: var(--green);
+      background: rgba(0, 255, 157, 0.06);
+      color: var(--text);
+    }
+
+    .alert strong {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* STEP LIST */
+    .steps {
+      list-style: none;
+      margin: 1.5rem 0;
+    }
+
+    .steps li {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      min-width: 32px;
+      height: 32px;
+      background: rgba(0, 212, 255, 0.15);
+      border: 1px solid rgba(0, 212, 255, 0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 900;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0;
+    }
+
+    .steps p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    /* CHECKLIST */
+    .checklist {
+      list-style: none;
+      margin: 1rem 0;
+    }
+
+    .checklist li {
+      padding: 0.4rem 0;
+      display: flex;
+      gap: 0.7rem;
+      font-size: 0.9rem;
+      color: var(--text2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .checklist li::before {
+      content: '○';
+      color: var(--accent);
+      font-size: 0.7rem;
+      margin-top: 0.25rem;
+    }
+
+    /* SECTION SEPARATOR */
+    .section-sep {
+      width: 100%;
+      padding: 3rem 2rem;
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.03), rgba(123, 94, 167, 0.03));
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .section-sep h2 {
+      margin-bottom: 0.5rem;
+    }
+
+    /* MATRIX */
+    .matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 2rem 0;
+    }
+
+    .matrix-cell {
+      background: var(--panel);
+      padding: 1.2rem;
+      font-size: 0.85rem;
+    }
+
+    .matrix-cell.header {
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-align: center;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--text2);
+      font-size: 0.85rem;
+    }
+
+    .single-code {
+      background: #060a14;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 1.5rem 0;
+    }
+
+    ul.bullet-list {
+      list-style: none;
+      margin: 1rem 0 1rem 0;
+    }
+
+    ul.bullet-list li {
+      padding: 0.3rem 0 0.3rem 1.5rem;
+      position: relative;
+      font-size: 0.9rem;
+      color: var(--text2);
+    }
+
+    ul.bullet-list li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    .highlight-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .highlight-box h3 {
+      margin-top: 0;
+    }
+
+    @media print {
+      nav {
+        display: none;
+      }
+
+      .cover {
+        min-height: auto;
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <span class="logo">⚙ SYSADMIN GUIDE</span>
+    <a href="#cover">Intro</a>
+    <a href="#livelli">Livelli</a>
+    <a href="#infra">Infrastruttura</a>
+    <a href="#networking">Networking</a>
+    <a href="#windows-server">Windows Server</a>
+    <a href="#active-directory">Active Directory</a>
+    <a href="#microsoft365">Microsoft 365</a>
+    <a href="#vmware">VMware</a>
+    <a href="#linux">Linux Server</a>
+    <a href="#ssh">SSH & Remote</a>
+    <a href="#rdp">Remote Desktop</a>
+    <a href="#backup">Backup</a>
+    <a href="#monitoring">Monitoring</a>
+    <a href="#sicurezza">Sicurezza</a>
+    <a href="#livello3">3° Livello</a>
+  </nav>
+
+  <!-- COVER -->
+  <div class="cover" id="cover">
+    <div class="cover-badge">📖 Guida Professionale Completa</div>
+    <h1>Il Sistemista IT<br>dal 1° al 3° Livello</h1>
+    <p class="cover-sub">
+      Tutto ciò che un SysAdmin deve sapere: infrastruttura, Active Directory,
+      Microsoft 365, VMware, Linux, SSH, Remote Desktop e molto altro.
+      Comandi paralleli Windows & Linux.
+    </p>
+    <div class="cover-pills">
+      <span class="pill pill-1">🟢 1° Livello — Help Desk & Operativo</span>
+      <span class="pill pill-2">🔵 2° Livello — Sistemista Avanzato</span>
+      <span class="pill pill-3">🟠 3° Livello — Architetto / Senior</span>
+    </div>
+    <div class="cover-stats">
+      <div class="stat">
+        <div class="stat-num">20+</div>
+        <div class="stat-lbl">Pagine di contenuto</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100+</div>
+        <div class="stat-lbl">Comandi pratici</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">15+</div>
+        <div class="stat-lbl">Aree tematiche</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">WIN+LIN</div>
+        <div class="stat-lbl">Doppio OS coverage</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 1. I LIVELLI DEL SISTEMISTA -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section" id="livelli">
+    <div class="section-label">Capitolo 1</div>
+    <h2>I Livelli del Sistemista</h2>
+    <p>Il lavoro del sistemista IT è strutturato in livelli che definiscono la complessità delle attività, l'autonomia
+      operativa e le competenze richieste. Comprendere questa gerarchia è fondamentale per orientarsi nella carriera e
+      nel lavoro quotidiano.</p>
+
+    <div class="levels-diagram">
+      <div class="level-row">
+        <div class="level-badge level-1">
+          <span class="lnum">L1</span>
+          <span class="ltxt">Primo Livello</span>
+        </div>
+        <div class="level-content">
+          <h4 style="color:var(--green)">Help Desk & Supporto Operativo</h4>
+          <p>Il sistemista di primo livello è il primo punto di contatto con gli utenti finali. Gestisce ticket, risolve
+            problemi comuni, esegue operazioni di routine e scala i problemi complessi ai livelli superiori. Lavora
+            principalmente seguendo procedure documentate (SOP).</p>
+          <div class="tag-list">
+            <span class="tag tag-green">Gestione Ticket</span>
+            <span class="tag tag-green">Reset Password</span>
+            <span class="tag tag-green">Assistenza PC</span>
+            <span class="tag tag-green">Office 365 Base</span>
+            <span class="tag tag-green">Printer Setup</span>
+            <span class="tag tag-green">VPN Client</span>
+            <span class="tag tag-green">Antivirus</span>
+            <span class="tag tag-green">Onboarding Utenti</span>
+          </div>
+        </div>
+      </div>
+      <div class="level-row">
+        <div class="level-badge level-2">
+          <span class="lnum">L2</span>
+          <span class="ltxt">Secondo Livello</span>
+        </div>
+        <div class="level-content">
+          <h4 style="color:var(--accent)">Sistemista Server & Infrastruttura</h4>
+          <p>Il sistemista di secondo livello gestisce server, virtualizzazione, Active Directory, reti e servizi
+            aziendali. Ha autonomia operativa elevata, gestisce incidenti complessi, pianifica manutenzioni e mantiene
+            l'infrastruttura. È il backbone tecnico dell'azienda.</p>
+          <div class="tag-list">
+            <span class="tag tag-blue">Windows Server</span>
+            <span class="tag tag-blue">Active Directory</span>
+            <span class="tag tag-blue">VMware/Hyper-V</span>
+            <span class="tag tag-blue">Exchange/M365</span>
+            <span class="tag tag-blue">Backup & DR</span>
+            <span class="tag tag-blue">Firewall</span>
+            <span class="tag tag-blue">DNS/DHCP</span>
+            <span class="tag tag-blue">Scripting</span>
+          </div>
+        </div>
+      </div>
+      <div class="level-row">
+        <div class="level-badge level-3">
+          <span class="lnum">L3</span>
+          <span class="ltxt">Terzo Livello</span>
+        </div>
+        <div class="level-content">
+          <h4 style="color:var(--accent3)">Architetto / Senior Infrastructure Engineer</h4>
+          <p>Il sistemista di terzo livello è un architetto che progetta soluzioni, gestisce progetti complessi,
+            definisce standard e policy aziendali. Spesso lavora con vendor, consulenti e management. Possiede
+            specializzazioni deep in una o più aree (sicurezza, cloud, networking, storage).</p>
+          <div class="tag-list">
+            <span class="tag tag-orange">Cloud Architecture</span>
+            <span class="tag tag-orange">Azure / AWS</span>
+            <span class="tag tag-orange">Zero Trust</span>
+            <span class="tag tag-orange">Disaster Recovery</span>
+            <span class="tag tag-orange">vSAN / SDS</span>
+            <span class="tag tag-orange">SIEM / SOC</span>
+            <span class="tag tag-orange">IAM / PKI</span>
+            <span class="tag tag-orange">DevOps / IaC</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Matrice Responsabilità</h3>
+    <div class="matrix">
+      <div class="matrix-cell header">Attività</div>
+      <div class="matrix-cell header" style="color:var(--green)">1° Livello</div>
+      <div class="matrix-cell header" style="color:var(--accent)">2° Livello</div>
+      <div class="matrix-cell">Gestione ticket utenti</div>
+      <div class="matrix-cell" style="color:var(--green)">✅ Primario</div>
+      <div class="matrix-cell" style="color:var(--text2)">Escalation</div>
+      <div class="matrix-cell">Installazione SW client</div>
+      <div class="matrix-cell" style="color:var(--green)">✅ Sì</div>
+      <div class="matrix-cell" style="color:var(--text2)">Se complessa</div>
+      <div class="matrix-cell">Gestione AD (utenti base)</div>
+      <div class="matrix-cell" style="color:var(--green)">✅ Limitata</div>
+      <div class="matrix-cell" style="color:var(--accent)">✅ Completa</div>
+      <div class="matrix-cell">Gestione server fisici/VM</div>
+      <div class="matrix-cell" style="color:var(--text2)">❌</div>
+      <div class="matrix-cell" style="color:var(--accent)">✅ Primario</div>
+      <div class="matrix-cell">Configurazione firewall</div>
+      <div class="matrix-cell" style="color:var(--text2)">❌</div>
+      <div class="matrix-cell" style="color:var(--accent)">✅ Sì</div>
+      <div class="matrix-cell">Backup & Restore</div>
+      <div class="matrix-cell" style="color:var(--green)">Monitoraggio</div>
+      <div class="matrix-cell" style="color:var(--accent)">✅ Gestione</div>
+      <div class="matrix-cell">Scripting / Automazione</div>
+      <div class="matrix-cell" style="color:var(--green)">Base (batch)</div>
+      <div class="matrix-cell" style="color:var(--accent)">✅ PowerShell/Bash</div>
+      <div class="matrix-cell">Progettazione infra</div>
+      <div class="matrix-cell" style="color:var(--text2)">❌</div>
+      <div class="matrix-cell" style="color:var(--text2)">Partecipa</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 2. INFRASTRUTTURA -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section" id="infra">
+    <div class="section-label">Capitolo 2</div>
+    <h2>Infrastruttura IT Aziendale</h2>
+    <p>Un sistemista deve avere una visione chiara dell'intera architettura IT. Di seguito una mappa logica tipica di
+      un'azienda medio-grande.</p>
+
+    <h3>🗺 Mappa Topologica — Rete Aziendale Tipica</h3>
+    <div class="topo-map">
+      <div class="topo-inner">
+        <div class="topo-row">
+          <div class="topo-node internet">🌐 Internet</div>
+        </div>
+        <div class="topo-arrow">↕</div>
+        <div class="topo-row">
+          <div class="topo-node fw">🛡 Firewall / UTM<br><small>Fortinet / pfSense / Palo Alto</small></div>
+        </div>
+        <div class="topo-arrow">↕</div>
+        <div class="topo-row">
+          <div class="topo-node core">🔀 Core Switch L3<br><small>Cisco / HPE / Juniper</small></div>
+        </div>
+        <div class="topo-arrow">↕</div>
+        <div class="topo-row" style="gap:3rem">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+            <div class="topo-node core" style="min-width:120px">VLAN Server<br><small>10.10.0.0/24</small></div>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center">
+              <div class="topo-node server" style="min-width:85px;font-size:0.72rem">🖥 DC1<br>AD/DNS</div>
+              <div class="topo-node server" style="min-width:85px;font-size:0.72rem">🖥 DC2<br>AD/DNS</div>
+              <div class="topo-node server" style="min-width:85px;font-size:0.72rem">🖥 ESXi<br>VMware</div>
+              <div class="topo-node server" style="min-width:85px;font-size:0.72rem">🖥 File<br>Server</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+            <div class="topo-node core" style="min-width:120px">VLAN Client<br><small>10.20.0.0/24</small></div>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center">
+              <div class="topo-node client" style="min-width:85px;font-size:0.72rem">💻 PC<br>Utenti</div>
+              <div class="topo-node client" style="min-width:85px;font-size:0.72rem">📱 Mobile<br>BYOD</div>
+              <div class="topo-node client" style="min-width:85px;font-size:0.72rem">🖨 Printer<br>VLAN</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+            <div class="topo-node core" style="min-width:120px">DMZ<br><small>10.30.0.0/24</small></div>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center">
+              <div class="topo-node fw" style="min-width:85px;font-size:0.72rem">🌐 Web<br>Server</div>
+              <div class="topo-node fw" style="min-width:85px;font-size:0.72rem">📧 Mail<br>Relay</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Componenti Fondamentali</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🏢</div>
+        <h4>Domain Controller (DC)</h4>
+        <p>Server Windows con ruolo AD DS. Gestisce autenticazione, policy di gruppo (GPO), DNS interno e DHCP. In
+          ambienti enterprise si raccomanda almeno 2 DC per ridondanza (DC1 + DC2).</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🖥</div>
+        <h4>Server di Virtualizzazione</h4>
+        <p>Host VMware ESXi o Hyper-V che eseguono le macchine virtuali. In cluster permettono alta disponibilità (HA) e
+          migrazione live (vMotion/Live Migration) senza downtime.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📁</div>
+        <h4>File Server / NAS</h4>
+        <p>Storage condiviso aziendale. Può essere Windows Server con DFS, un NAS Synology/QNAP, o storage enterprise
+          (NetApp, EMC). Gestisce permessi NTFS e condivisioni SMB/NFS.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛡</div>
+        <h4>Firewall & UTM</h4>
+        <p>Prima linea di difesa perimetrale. Gestisce regole di accesso, NAT, VPN site-to-site e client, IPS/IDS, web
+          filtering. Soluzioni comuni: Fortinet, pfSense, Sophos, Palo Alto.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔀</div>
+        <h4>Switch Managed L2/L3</h4>
+        <p>Gestione VLAN, STP/RSTP, aggregazione link (LACP), QoS per voce/video. Gli switch L3 gestiscono il routing
+          tra VLAN evitando di sovraccaricare il firewall.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">☁</div>
+        <h4>Cloud Ibrido</h4>
+        <p>Microsoft Azure AD Connect sincronizza le identità on-premise verso il cloud. Azure AD permette SSO, MFA e
+          accesso sicuro a M365, Teams, SharePoint e app SaaS esterne.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 3. NETWORKING DIAGNOSTICA -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section" id="networking">
+    <div class="section-label">Capitolo 3</div>
+    <h2>Networking & Diagnostica di Rete</h2>
+    <p>La diagnostica di rete è tra le attività più frequenti sia al 1° che al 2° livello. Un sistemista deve saper
+      rilevare problemi di connettività, DNS, routing e latenza.</p>
+
+    <h3>Comandi di Diagnostica Base — Windows vs Linux</h3>
+
+    <h4>📡 Test Connettività (Ping)</h4>
+    <div class="code-comparison">
+      <div class="code-block">
+        <div class="code-header win"><span class="dot"></span> Windows (CMD / PowerShell)</div>
+        <pre><span class="cmt"># Ping standard</span>
+<span class="cmd">ping 8.8.8.8</span>
+<span class="cmd">ping google.com -t</span>        <span class="cmt"># continuo</span>
+<span class="cmd">ping 192.168.1.1 -n 10</span>   <span class="cmt"># 10 pacchetti</span>
+
+<span class="cmt"># Ping con IPv6</span>
+<span class="cmd">ping -6 google.com</span>
+
+<span class="cmt"># PowerShell</span>
+<span class="cmd">Test-Connection -ComputerName google.com -Count 4</span>
+<span class="cmd">Test-NetConnection -ComputerName server01 -Port 443</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header linux"><span class="dot"></span> Linux (Bash)</div>
+        <pre><span class="cmt"># Ping standard</span>
+<span class="cmd">ping 8.8.8.8</span>
+<span class="cmd">ping -c 4 google.com</span>     <span class="cmt"># 4 pacchetti</span>
+<span class="cmd">ping -i 0.5 192.168.1.1</span> <span class="cmt"># intervallo 0.5s</span>
+
+<span class="cmt"># Ping con IPv6</span>
+<span class="cmd">ping6 google.com</span>
+
+<span class="cmt"># Ping con verbose/dettagli</span>
+<span class="cmd">ping -v -c 5 192.168.1.1</span></pre>
+      </div>
+    </div>
+
+    <h4>🔍 Traceroute — Percorso dei Pacchetti</h4>
+    <div class="code-comparison">
+      <div class="code-block">
+        <div class="code-header win"><span class="dot"></span> Windows</div>
+        <pre><span class="cmd">tracert google.com</span>
+<span class="cmd">tracert -d 8.8.8.8</span>    <span class="cmt"># no DNS resolve</span>
+<span class="cmt"># PowerShell</span>
+<span class="cmd">Test-NetConnection -ComputerName google.com -TraceRoute</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header linux"><span class="dot"></span> Linux</div>
+        <pre><span class="cmd">traceroute google.com</span>
+<span class="cmd">traceroute -n 8.8.8.8</span>   <span class="cmt"># no DNS resolve</span>
+<span class="cmd">mtr google.com</span>          <span class="cmt"># realtime (installare mtr)</span>
+<span class="cmd">tracepath google.com</span>    <span class="cmt"># no root required</span></pre>
+      </div>
+    </div>
+
+    <h4>🌐 DNS — Risoluzione Nomi</h4>
+    <div class="code-comparison">
+      <div class="code-block">
+        <div class="code-header win"><span class="dot"></span> Windows</div>
+        <pre><span class="cmd">nslookup google.com</span>
+<span class="cmd">nslookup google.com 8.8.8.8</span>  <span class="cmt"># DNS specifico</span>
+<span class="cmd">nslookup -type=MX gmail.com</span>   <span class="cmt"># record MX</span>
+<span class="cmd">ipconfig /flushdns</span>             <span class="cmt"># svuota cache DNS</span>
+<span class="cmd">ipconfig /displaydns</span>           <span class="cmt"># mostra cache</span>
+<span class="cmt"># PowerShell</span>
+<span class="cmd">Resolve-DnsName google.com</span>
+<span class="cmd">Resolve-DnsName google.com -Type MX</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header linux"><span class="dot"></span> Linux</div>
+        <pre><span class="cmd">nslookup google.com</span>
+<span class="cmd">dig google.com</span>              <span class="cmt"># dettagliato</span>
+<span class="cmd">dig @8.8.8.8 google.com</span>    <span class="cmt"># DNS specifico</span>
+<span class="cmd">dig google.com MX</span>          <span class="cmt"># record MX</span>
+<span class="cmd">host google.com</span>            <span class="cmt"># semplice</span>
+<span class="cmt"># Svuota cache systemd-resolved</span>
+<span class="cmd">sudo systemd-resolve --flush-caches</span></pre>
+      </div>
+    </div>
+
+    <h4>🔌 Porte e Connessioni Attive</h4>
+    <div class="code-comparison">
+      <div class="code-block">
+        <div class="code-header win"><span class="dot"></span> Windows</div>
+        <pre><span class="cmd">netstat -ano</span>              <span class="cmt"># connessioni + PID</span>
+<span class="cmd">netstat -ano | findstr :80</span> <span class="cmt"># filtra porta</span>
+<span class="cmt"># PowerShell</span>
+<span class="cmd">Get-NetTCPConnection</span>
+<span class="cmd">Get-NetTCPConnection -State Listen</span>
+<span class="cmd">Test-NetConnection -ComputerName server01 -Port 3389</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header linux"><span class="dot"></span> Linux</div>
+        <pre><span class="cmd">netstat -tulnp</span>           <span class="cmt"># porte in ascolto</span>
+<span class="cmd">ss -tulnp</span>               <span class="cmt"># più moderno</span>
+<span class="cmd">ss -tulnp | grep :80</span>    <span class="cmt"># filtra porta</span>
+<span class="cmd">lsof -i :443</span>            <span class="cmt"># processo su porta</span>
+<span class="cmd">nmap -sV 192.168.1.100</span>  <span class="cmt"># scan porte host</span></pre>
+      </div>
+    </div>
+
+    <h4>⚙ Configurazione Interfacce di Rete</h4>
+    <div class="code-comparison">
+      <div class="code-block">
+        <div class="code-header win"><span class="dot"></span> Windows</div>
+        <pre><span class="cmd">ipconfig /all</span>            <span class="cmt"># info complete</span>
+<span class="cmd">ipconfig /release</span>        <span class="cmt"># rilascia IP DHCP</span>
+<span class="cmd">ipconfig /renew</span>          <span class="cmt"># rinnova IP DHCP</span>
+<span class="cmt"># PowerShell</span>
+<span class="cmd">Get-NetIPAddress</span>
+<span class="cmd">Get-NetAdapter</span>
+<span class="cmd">New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 10.0.0.10 -PrefixLength 24 -DefaultGateway 10.0.0.1</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header linux"><span class="dot"></span> Linux</div>
+        <pre><span class="cmd">ip addr show</span>           <span class="cmt"># info interfacce</span>
+<span class="cmd">ip route show</span>          <span class="cmt"># tabella routing</span>
+<span class="cmd">ip link set eth0 up</span>    <span class="cmt"># abilita interfaccia</span>
+<span class="cmt"># Assegna IP temporaneo</span>
+<span class="cmd">ip addr add 10.0.0.10/24 dev eth0</span>
+<span class="cmt"># Rinnova DHCP</span>
+<span class="cmd">sudo dhclient -r eth0 && sudo dhclient eth0</span></pre>
+      </div>
+    </div>
+
+    <div class="alert alert-tip">
+      <strong>💡 Pro Tip — 2° Livello</strong>
+      Quando un utente segnala "internet non funziona", il sistemista segue il percorso logico: ping al gateway → ping
+      al DNS → ping a 8.8.8.8 → nslookup → traceroute. Questo permette di isolare immediatamente il punto di guasto
+      (rete locale, DNS, WAN o destinazione).
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 4. WINDOWS SERVER -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section" id="windows-server">
+    <div class="section-label">Capitolo 4</div>
+    <h2>Windows Server — Gestione e Amministrazione</h2>
+    <p>Windows Server è il sistema operativo server più diffuso nelle PMI italiane. Il sistemista di 2° livello deve
+      padroneggiarne l'amministrazione quotidiana.</p>
+
+    <h3>Ruoli Server più Comuni</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🔐</div>
+        <h4>AD DS — Active Directory Domain Services</h4>
+        <p>Cuore dell'identità aziendale. Gestisce utenti, computer, gruppi, GPO e trust. Richiede almeno 2 DC per alta
+          disponibilità.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <h4>DNS & DHCP</h4>
+        <p>DNS risolve i nomi interni (server01.azienda.local). DHCP assegna IP automaticamente ai client. Spesso
+          co-installati sul DC.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📂</div>
+        <h4>File & Storage Services</h4>
+        <p>Condivisioni SMB, gestione quote, shadow copy, DFS (Distributed File System) per namespace distribuiti e
+          replica cartelle.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🖨</div>
+        <h4>Print Services</h4>
+        <p>Gestione centralizzata delle stampanti di rete, driver deployment via GPO, print queue monitoring e
+          troubleshooting code di stampa.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔒</div>
+        <h4>IIS — Web Server</h4>
+        <p>Hosting applicazioni web .NET, gestione certificati SSL/TLS, application pool, binding siti, log accessi e
+          configurazione sicurezza.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h4>WSUS — Windows Update</h4>
+        <p>Gestione centralizzata degli aggiornamenti Windows per server e workstation. Permette di approvare, testare e
+          distribuire patch in modo controllato.</p>
+      </div>
+    </div>
+
+    <h3>Comandi PowerShell Essenziali per Windows Server</h3>
+
+    <h4>Gestione Servizi</h4>
+    <div class="single-code">
+      <div class="code-header both"><span class="dot"></span> PowerShell — Gestione Servizi</div>
+      <pre><span class="cmt"># Visualizza tutti i servizi</span>
+<span class="cmd">Get-Service</span>
+<span class="cmd">Get-Service | Where-Object {$_.Status -eq 'Stopped'}</span>
+
+<span class="cmt"># Avvia, ferma, riavvia un servizio</span>
+<span class="cmd">Start-Service -Name "Spooler"</span>
+<span class="cmd">Stop-Service -Name "Spooler" -Force</span>
+<span class="cmd">Restart-Service -Name "W32Time"</span>
+
+<span class="cmt"># Configura avvio automatico</span>
+<span class="cmd">Set-Service -Name "Spooler" -StartupType Automatic</span>
+
+<span class="cmt"># Controlla servizio specifico</span>
+<span class="cmd">Get-Service -Name "NTDS" | Select-Object Name, Status, StartType</span></pre>
+    </div>
+
+    <h4>Gestione Dischi e Storage</h4>
+    <div class="code-comparison">
+      <div class="code-block">
+        <div class="code-header win"><span class="dot"></span> Windows — PowerShell/CMD</div>
+        <pre><span class="cmt"># Info dischi</span>
+<span class="cmd">Get-Disk</span>
+<span class="cmd">Get-Volume</span>
+<span class="cmd">Get-Partition</span>
+
+<span class="cmt"># Spazio libero</span>
+<span class="cmd">Get-PSDrive C</span>
+<span class="cmd">Get-Volume | Select DriveLetter, SizeRemaining, Size</span>
+
+<span class="cmt"># CMD - diskpart (interattivo)</span>
+<span class="cmd">diskpart</span>
+<span class="cmd">  list disk</span>
+<span class="cmd">  select disk 1</span>
+<span class="cmd">  list partition</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header linux"><span class="dot"></span> Linux</div>
+        <pre><span class="cmt"># Info dischi</span>
+<span class="cmd">lsblk</span>
+<span class="cmd">fdisk -l</span>
+<span class="cmd">blkid</span>
+
+<span class="cmt"># Spazio libero</span>
+<span class="cmd">df -h</span>
+<span class="cmd">du -sh /var/log/*</span>
+
+<span class="cmt"># Partizioni e filesystems</span>
+<span class="cmd">parted -l</span>
+<span class="cmd">pvdisplay && vgdisplay && lvdisplay</span>
+<span class="cmt"># (LVM — Logical Volume Manager)</span></pre>
+      </div>
+    </div>
+
+    <h4>Monitoraggio Performance</h4>
+    <div class="code-comparison">
+      <div class="code-block">
+        <div class="code-header win"><span class="dot"></span> Windows</div>
+        <pre><span class="cmt"># CPU e Memoria</span>
+<span class="cmd">Get-Process | Sort-Object CPU -Descending | Select -First 10</span>
+<span class="cmd">Get-Counter '\Processor(_Total)\% Processor Time'</span>
+
+<span class="cmt"># RAM totale e disponibile</span>
+<span class="cmd">Get-CimInstance Win32_OperatingSystem | Select TotalVisibleMemorySize, FreePhysicalMemory</span>
+
+<span class="cmt"># Top processi per memoria</span>
+<span class="cmd">Get-Process | Sort WS -Desc | Select -First 10 Name, WS, CPU</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header linux"><span class="dot"></span> Linux</div>
+        <pre><span class="cmt"># CPU e Memoria</span>
+<span class="cmd">top</span>
+<span class="cmd">htop</span>         <span class="cmt"># se installato</span>
+<span class="cmd">uptime</span>       <span class="cmt"># load average</span>
+
+<span class="cmt"># Memoria</span>
+<span class="cmd">free -h</span>
+<span class="cmd">vmstat -s</span>
+
+<span class="cmt"># Processi per CPU/RAM</span>
+<span class="cmd">ps aux --sort=-%cpu | head -10</span>
+<span class="cmd">ps aux --sort=-%mem | head -10</span></pre>
+      </div>
+    </div>
+
+    <h4>Event Log — Analisi degli Errori</h4>
+    <div class="single-code">
+      <div class="code-header win"><span class="dot"></span> PowerShell — Event Log</div>
+      <pre><span class="cmt"># Ultimi 20 errori nel System log</span>
+<span class="cmd">Get-EventLog -LogName System -EntryType Error -Newest 20</span>
+
+<span class="cmt"># Event Log specifico con filtro</span>
+<span class="cmd">Get-WinEvent -FilterHashtable @{LogName='Application'; Level=2; StartTime=(Get-Date).AddDays(-7)}</span>
+
+<span class="cmt"># Cerca evento specifico per ID</span>
+<span class="cmd">Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4625} | Select -First 10</span>
+<span class="cmt"># ID 4625 = Login fallito — utile per rilevare attacchi brute force</span>
+
+<span class="cmt"># Esporta event log</span>
+<span class="cmd">Get-EventLog -LogName System -Newest 100 | Export-Csv C:\Logs\system_errors.csv -NoTypeInformation</span></pre>
+    </div>
+
+    <div class="alert alert-warn">
+      <strong>⚠ Attenzione</strong>
+      Prima di riavviare un servizio critico su un server di produzione, verifica sempre se ci sono utenti connessi
+      (<code>query session</code> o <code>quser</code>) e comunica il downtime. Non agire mai d'impulso su sistemi in
+      produzione.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 5. ACTIVE DIRECTORY -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section" id="active-directory">
+    <div class="section-label">Capitolo 5</div>
+    <h2>Active Directory — Gestione Completa</h2>
+    <p>Active Directory è il servizio di directory più utilizzato nelle aziende Microsoft. La sua gestione corretta è il
+      cuore del lavoro del sistemista di 2° livello.</p>
+
+    <h3>🗺 Struttura AD — Mappa Gerarchica</h3>
+    <div class="topo-map">
+      <div class="topo-inner" style="gap:0.3rem">
+        <div class="topo-node core" style="width:250px; padding:1rem">
+          🌲 <strong>Forest</strong>: azienda.local<br>
+          <small style="color:var(--text2)">Livello più alto — trust implicito tra domini</small>
+        </div>
+        <div class="topo-arrow">↕</div>
+        <div class="topo-row" style="gap:2rem">
+          <div class="topo-node server" style="min-width:150px; padding:1rem">
+            🏢 <strong>Domain</strong><br>
+            azienda.local<br>
+            <small style="color:var(--text2)">DC1 + DC2</small>
+          </div>
+          <div class="topo-node server" style="min-width:150px; padding:1rem; opacity:0.6">
+            🏢 <strong>Child Domain</strong><br>
+            filiale.azienda.local<br>
+            <small style="color:var(--text2)">Opzionale</small>
+          </div>
+        </div>
+        <div class="topo-arrow">↕</div>
+        <div class="topo-row" style="gap:1rem;flex-wrap:wrap">
+          <div class="topo-node client" style="min-width:110px;padding:0.8rem;font-size:0.78rem">📁 OU<br>Utenti</div>
+          <div class="topo-node client" style="min-width:110px;padding:0.8rem;font-size:0.78rem">📁 OU<br>Computer</div>
+          <div class="topo-node client" style="min-width:110px;padding:0.8rem;font-size:0.78rem">📁 OU<br>Gruppi</div>
+          <div class="topo-node client" style="min-width:110px;padding:0.8rem;font-size:0.78rem">📁 OU<br>Server</div>
+          <div class="topo-node client" style="min-width:110px;padding:0.8rem;font-size:0.78rem">📁 OU<br>Service Acc.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Gestione Utenti — PowerShell RSAT</h3>
+    <div class="single-code">
+      <div class="code-header win"><span class="dot"></span> PowerShell — Modulo ActiveDirectory</div>
+      <pre><span class="cmt"># Importa modulo AD (richiede RSAT)</span>
+<span class="cmd">Import-Module ActiveDirectory</span>
+
+<span class="cmt">━━━ UTENTI ━━━</span>
+<span class="cmt"># Crea nuovo utente</span>
+<span class="cmd">New-ADUser -Name "Mario Rossi" -SamAccountName "mrossi" -UserPrincipalName "mrossi@azienda.local" -Path "OU=Utenti,DC=azienda,DC=local" -AccountPassword (ConvertTo-SecureString "P@ssw0rd123!" -AsPlainText -Force) -Enabled $true</span>
+
+<span class="cmt"># Modifica utente</span>
+<span class="cmd">Set-ADUser -Identity "mrossi" -Title "Responsabile IT" -Department "IT" -Office "Milano"</span>
+
+<span class="cmt"># Reset password</span>
+<span class="cmd">Set-ADAccountPassword -Identity "mrossi" -Reset -NewPassword (ConvertTo-SecureString "NuovaPass123!" -AsPlainText -Force)</span>
+<span class="cmd">Set-ADUser -Identity "mrossi" -ChangePasswordAtLogon $true</span>
+
+<span class="cmt"># Disabilita / abilita account</span>
+<span class="cmd">Disable-ADAccount -Identity "mrossi"</span>
+<span class="cmd">Enable-ADAccount -Identity "mrossi"</span>
+
+<span class="cmt"># Sblocca account bloccato</span>
+<span class="cmd">Unlock-ADAccount -Identity "mrossi"</span>
+
+<span class="cmt"># Cerca utenti inattivi da 90 giorni</span>
+<span class="cmd">Search-ADAccount -AccountInactive -TimeSpan 90 -UsersOnly | Select Name, LastLogonDate</span>
+
+<span class="cmt">━━━ GRUPPI ━━━</span>
+<span class="cmt"># Aggiungi utente a gruppo</span>
+<span class="cmd">Add-ADGroupMember -Identity "GRP_VPN_Users" -Members "mrossi"</span>
+
+<span class="cmt"># Rimuovi da gruppo</span>
+<span class="cmd">Remove-ADGroupMember -Identity "GRP_VPN_Users" -Members "mrossi" -Confirm:$false</span>
+
+<span class="cmt"># Membri di un gruppo</span>
+<span class="cmd">Get-ADGroupMember -Identity "Domain Admins" | Select Name, SamAccountName</span>
+
+<span class="cmt"># Gruppi di un utente</span>
+<span class="cmd">Get-ADPrincipalGroupMembership -Identity "mrossi" | Select Name</span>
+
+<span class="cmt">━━━ COMPUTER ━━━</span>
+<span class="cmt"># Lista computer del dominio</span>
+<span class="cmd">Get-ADComputer -Filter * | Select Name, OperatingSystem, LastLogonDate</span>
+
+<span class="cmt"># Computer inattivi</span>
+<span class="cmd">Get-ADComputer -Filter {LastLogonDate -lt (Get-Date).AddDays(-60)} | Select Name</span></pre>
+    </div>
+
+    <h3>Group Policy Objects (GPO)</h3>
+    <p>Le GPO sono uno degli strumenti più potenti di Active Directory. Permettono di applicare configurazioni,
+      restrizioni e software a utenti e computer del dominio in modo centralizzato.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🔒</div>
+        <h4>GPO Sicurezza</h4>
+        <p>Policy per password (lunghezza minima, complessità, scadenza), lockout account dopo N tentativi,
+          disabilitazione USB, screen saver con blocco, policy UAC.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🖥</div>
+        <h4>GPO Desktop</h4>
+        <p>Sfondo desktop aziendale, restrizioni al Pannello di Controllo, mappa drive di rete automatica
+          (\\server\share), configurazione proxy, redirezione cartelle.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📦</div>
+        <h4>GPO Software</h4>
+        <p>Distribuzione software MSI/MSIX, whitelist/blacklist applicazioni (AppLocker), configurazione browser
+          (Edge/Chrome policy), certificati trusted.</p>
+      </div>
+    </div>
+
+    <h4>Comandi GPO Utili</h4>
+    <div class="single-code">
+      <div class="code-header win"><span class="dot"></span> CMD / PowerShell — GPO</div>
+      <pre><span class="cmt"># Forza aggiornamento GPO sul client</span>
+<span class="cmd">gpupdate /force</span>
+
+<span class="cmt"># Report GPO applicato all'utente/computer corrente</span>
+<span class="cmd">gpresult /r</span>
+<span class="cmd">gpresult /h C:\gpreport.html</span>   <span class="cmt"># report HTML dettagliato</span>
+<span class="cmd">gpresult /user mrossi /h C:\gpreport_mrossi.html</span>
+
+<span class="cmt"># Forza GPUpdate su PC remoto</span>
+<span class="cmd">Invoke-GPUpdate -Computer "PC001" -Force</span>
+
+<span class="cmt"># Lista tutte le GPO del dominio</span>
+<span class="cmd">Get-GPO -All | Select DisplayName, GpoStatus, CreationTime</span></pre>
+    </div>
+
+    <div class="alert alert-info">
+      <strong>ℹ Best Practice AD</strong>
+      Usa il modello Tier 0/1/2 per separare gli account amministrativi: gli account Domain Admin non devono mai essere
+      usati per login interattivi su workstation. Crea account separati: utente normale, admin workstation (L1), admin
+      server (L2), domain admin (solo per AD management).
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 6. MICROSOFT 365 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section" id="microsoft365">
+    <div class="section-label">Capitolo 6</div>
+    <h2>Microsoft 365 — Amministrazione</h2>
+    <p>Microsoft 365 (ex Office 365) è la suite cloud Microsoft più adottata. L'amministratore gestisce licenze, utenti,
+      Teams, Exchange Online, SharePoint e sicurezza.</p>
+
+    <h3>🗺 Ecosystem Microsoft 365</h3>
+    <div class="topo-map">
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:1rem;">
+        <div class="topo-node core" style="padding:1rem;text-align:center">📧<br><strong>Exchange
+            Online</strong><br><small style="color:var(--text2)">Email aziendale</small></div>
+        <div class="topo-node core" style="padding:1rem;text-align:center">💬<br><strong>Teams</strong><br><small
+            style="color:var(--text2)">Chat/Video/Meeting</small></div>
+        <div class="topo-node core" style="padding:1rem;text-align:center">📁<br><strong>SharePoint</strong><br><small
+            style="color:var(--text2)">Intranet/Doc</small></div>
+        <div class="topo-node server" style="padding:1rem;text-align:center">☁<br><strong>OneDrive</strong><br><small
+            style="color:var(--text2)">Storage personale</small></div>
+        <div class="topo-node server" style="padding:1rem;text-align:center">🔐<br><strong>Entra ID</strong><br><small
+            style="color:var(--text2)">Identity (ex Azure AD)</small></div>
+        <div class="topo-node server" style="padding:1rem;text-align:center">🛡<br><strong>Defender</strong><br><small
+            style="color:var(--text2)">Security Suite</small></div>
+        <div class="topo-node client" style="padding:1rem;text-align:center">📊<br><strong>Intune</strong><br><small
+            style="color:var(--text2)">MDM Devices</small></div>
+        <div class="topo-node client" style="padding:1rem;text-align:center">🔄<br><strong>Azure AD
+            Connect</strong><br><small style="color:var(--text2)">Sync on-prem</small></div>
+      </div>
+    </div>
+
+    <h3>Gestione via PowerShell (ExchangeOnline + MSGraph)</h3>
+    <div class="single-code">
+      <div class="code-header both"><span class="dot"></span> PowerShell — Microsoft 365</div>
+      <pre><span class="cmt"># Installa moduli necessari</span>
+<span class="cmd">Install-Module -Name ExchangeOnlineManagement</span>
+<span class="cmd">Install-Module -Name Microsoft.Graph</span>
+<span class="cmd">Install-Module -Name MSOnline</span>
+
+<span class="cmt">━━━ CONNESSIONE ━━━</span>
+<span class="cmd">Connect-ExchangeOnline -UserPrincipalName admin@azienda.com</span>
+<span class="cmd">Connect-MgGraph -Scopes "User.ReadWrite.All", "Group.ReadWrite.All"</span>
+
+<span class="cmt">━━━ MAILBOX ━━━</span>
+<span class="cmt"># Lista mailbox</span>
+<span class="cmd">Get-Mailbox | Select DisplayName, PrimarySmtpAddress, RecipientTypeDetails</span>
+
+<span class="cmt"># Info mailbox specifica</span>
+<span class="cmd">Get-Mailbox -Identity "mrossi@azienda.com" | Select *size*, *quota*</span>
+
+<span class="cmt"># Aggiungi alias email</span>
+<span class="cmd">Set-Mailbox -Identity "mrossi@azienda.com" -EmailAddresses @{Add="mario.rossi@azienda.com"}</span>
+
+<span class="cmt"># Imposta forward automatico</span>
+<span class="cmd">Set-Mailbox -Identity "mrossi@azienda.com" -DeliverToMailboxAndForward $true -ForwardingAddress "manager@azienda.com"</span>
+
+<span class="cmt"># Condividi mailbox</span>
+<span class="cmd">Add-MailboxPermission -Identity "info@azienda.com" -User "mrossi@azienda.com" -AccessRights FullAccess</span>
+
+<span class="cmt"># Blocca invio/ricezione email (account compromesso)</span>
+<span class="cmd">Set-Mailbox -Identity "mrossi@azienda.com" -MessageCopyForSentAsEnabled $false</span>
+<span class="cmd">Set-CASMailbox -Identity "mrossi@azienda.com" -OWAEnabled $false -ActiveSyncEnabled $false -EwsEnabled $false</span>
+
+<span class="cmt">━━━ LICENZE ━━━</span>
+<span class="cmt"># Verifica licenze disponibili</span>
+<span class="cmd">Get-MgSubscribedSku | Select SkuPartNumber, ConsumedUnits, @{N="Available";E={$_.PrepaidUnits.Enabled - $_.ConsumedUnits}}</span>
+
+<span class="cmt"># Assegna licenza a utente</span>
+<span class="cmd">$sku = Get-MgSubscribedSku | Where {$_.SkuPartNumber -eq "ENTERPRISEPREMIUM"}</span>
+<span class="cmd">Set-MgUserLicense -UserId "mrossi@azienda.com" -AddLicenses @{SkuId=$sku.SkuId} -RemoveLicenses @()</span>
+
+<span class="cmt">━━━ MFA ━━━</span>
+<span class="cmt"># Verifica stato MFA utenti</span>
+<span class="cmd">Get-MsolUser | Select DisplayName, StrongAuthenticationRequirements</span></pre>
+    </div>
+
+    <h3>Operazioni Comuni nel portale M365 Admin</h3>
+    <table class="proc-table">
+      <tr>
+        <th>Operazione</th>
+        <th>Dove</th>
+        <th>Note</th>
+      </tr>
+      <tr>
+        <td>Reset password utente</td>
+        <td>Admin Center → Utenti → Utenti Attivi</td>
+        <td>Genera password temporanea o invia link reset</td>
+      </tr>
+      <tr>
+        <td>Assegnare licenza</td>
+        <td>Admin Center → Fatturazione → Licenze</td>
+        <td>Verificare prima disponibilità sedi</td>
+      </tr>
+      <tr>
+        <td>Creare gruppo Teams</td>
+        <td>Teams Admin → Teams → Gestisci Teams</td>
+        <td>Crea anche sito SharePoint associato</td>
+      </tr>
+      <tr>
+        <td>Bloccare accesso utente</td>
+        <td>Entra ID → Utenti → Blocca accesso</td>
+        <td>Usare in caso di dimissioni o compromissione</td>
+      </tr>
+      <tr>
+        <td>Revoca sessioni attive</td>
+        <td>Entra ID → Utenti → Revoca sessioni</td>
+        <td>Disconnette immediatamente da tutti i device</td>
+      </tr>
+      <tr>
+        <td>Configurare MFA</td>
+        <td>Entra ID → Sicurezza → MFA</td>
+        <td>Abilitare per tutti con Conditional Access</td>
+      </tr>
+      <tr>
+        <td>Verifica spam / malware</td>
+        <td>Security Center → Threat Explorer</td>
+        <td>Analizza email sospette ricevute</td>
+      </tr>
+      <tr>
+        <td>Restore email eliminata</td>
+        <td>Exchange Admin → Cassette postali → Ripristino</td>
+        <td>Retention period: default 14gg, max 30gg</td>
+      </tr>
+    </table>
+
+    <div class="alert alert-tip">
+      <strong>💡 Conditional Access — Best Practice</strong>
+      Configura sempre Conditional Access su Entra ID per richiedere MFA quando l'accesso avviene da IP non aziendali o
+      da device non gestiti (non Intune-enrolled). Questo protegge l'account anche se la password è compromessa.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 7. VMWARE -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section" id="vmware">
+    <div class="section-label">Capitolo 7</div>
+    <h2>VMware vSphere — Virtualizzazione</h2>
+    <p>VMware ESXi e vCenter sono la piattaforma di virtualizzazione enterprise più diffusa. Il sistemista di 2° livello
+      gestisce VM, snapshot, storage, rete virtuale e alta disponibilità.</p>
+
+    <h3>🗺 Architettura VMware vSphere</h3>
+    <div class="topo-map">
+      <div class="topo-inner">
+        <div class="topo-node core" style="width:280px; padding:1rem">
+          🎛 <strong>vCenter Server</strong><br>
+          <small style="color:var(--text2)">Console centralizzata di gestione</small>
+        </div>
+        <div class="topo-arrow">↕ gestisce</div>
+        <div class="topo-row" style="gap:2rem">
+          <div style="text-align:center">
+            <div class="topo-node server" style="min-width:140px; padding:1rem">
+              🖥 <strong>ESXi Host 1</strong><br>
+              <small style="color:var(--text2)">192.168.10.10</small>
+            </div>
+            <div style="margin-top:0.5rem;display:flex;gap:0.4rem;flex-wrap:wrap;justify-content:center">
+              <div class="topo-node client" style="min-width:70px;font-size:0.7rem;padding:0.5rem">VM1<br>DC01</div>
+              <div class="topo-node client" style="min-width:70px;font-size:0.7rem;padding:0.5rem">VM2<br>File</div>
+              <div class="topo-node client" style="min-width:70px;font-size:0.7rem;padding:0.5rem">VM3<br>SQL</div>
+            </div>
+          </div>
+          <div style="text-align:center">
+            <div class="topo-node server" style="min-width:140px; padding:1rem">
+              🖥 <strong>ESXi Host 2</strong><br>
+              <small style="color:var(--text2)">192.168.10.11</small>
+            </div>
+            <div style="margin-top:0.5rem;display:flex;gap:0.4rem;flex-wrap:wrap;justify-content:center">
+              <div class="topo-node client" style="min-width:70px;font-size:0.7rem;padding:0.5rem">VM4<br>DC02</div>
+              <div class="topo-node client" style="min-width:70px;font-size:0.7rem;padding:0.5rem">VM5<br>App</div>
+              <div class="topo-node client" style="min-width:70px;font-size:0.7rem;padding:0.5rem">VM6<br>Web</div>
+            </div>
+          </div>
+        </div>
+        <div class="topo-arrow">↕</div>
+        <div class="topo-row" style="gap:1.5rem">
+          <div class="topo-node fw" style="min-width:130px;padding:0.8rem;font-size:0.8rem">💾 Shared
+            Storage<br><small>vSAN / NFS / iSCSI</small></div>
+          <div class="topo-node fw" style="min-width:130px;padding:0.8rem;font-size:0.8rem">🔀 vSwitch<br><small>VLAN
+              Virtuali</small></div>
+          <div class="topo-node fw" style="min-width:130px;padding:0.8rem;font-size:0.8rem">🔄
+            vMotion<br><small>Migrazione live VM</small></div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Operazioni VMware via CLI (ESXi Host)</h3>
+    <div class="single-code">
+      <div class="code-header linux"><span class="dot"></span> ESXi Shell / SSH — Comandi ESXCLI</div>
+      <pre><span class="cmt">━━━ INFO HOST ━━━</span>
+<span class="cmd">esxcli system version get</span>           <span class="cmt"># versione ESXi</span>
+<span class="cmd">esxcli hardware cpu list</span>            <span class="cmt"># CPU</span>
+<span class="cmd">esxcli hardware memory get</span>         <span class="cmt"># RAM totale</span>
+<span class="cmd">esxcli storage nmp path list</span>       <span class="cmt"># path storage</span>
+
+<span class="cmt">━━━ GESTIONE VM ━━━</span>
+<span class="cmd">vim-cmd vmsvc/getallvms</span>            <span class="cmt"># lista tutte le VM con VMID</span>
+<span class="cmd">vim-cmd vmsvc/power.getstate VMID</span>  <span class="cmt"># stato VM (es. VMID=1)</span>
+<span class="cmd">vim-cmd vmsvc/power.on VMID</span>        <span class="cmt"># avvia VM</span>
+<span class="cmd">vim-cmd vmsvc/power.off VMID</span>       <span class="cmt"># spegni VM (hard)</span>
+<span class="cmd">vim-cmd vmsvc/power.shutdown VMID</span>  <span class="cmt"># shutdown graceful</span>
+<span class="cmd">vim-cmd vmsvc/power.reboot VMID</span>    <span class="cmt"># riavvia VM</span>
+<span class="cmd">vim-cmd vmsvc/power.suspend VMID</span>   <span class="cmt"># sospendi VM</span>
+
+<span class="cmt">━━━ SNAPSHOT ━━━</span>
+<span class="cmd">vim-cmd vmsvc/snapshot.get VMID</span>           <span class="cmt"># lista snapshot</span>
+<span class="cmd">vim-cmd vmsvc/snapshot.create VMID "Nome" "Descrizione" 0 0</span>  <span class="cmt"># crea snapshot</span>
+<span class="cmd">vim-cmd vmsvc/snapshot.removeall VMID</span>    <span class="cmt"># rimuovi tutti gli snapshot</span>
+
+<span class="cmt">━━━ DATASTORE ━━━</span>
+<span class="cmd">esxcli storage filesystem list</span>     <span class="cmt"># datastore</span>
+<span class="cmd">du -sh /vmfs/volumes/datastore1/*</span>  <span class="cmt"># spazio usato per VM</span>
+
+<span class="cmt">━━━ NETWORK ━━━</span>
+<span class="cmd">esxcli network vswitch standard list</span>     <span class="cmt"># vswitch</span>
+<span class="cmd">esxcli network nic list</span>                  <span class="cmt"># NIC fisiche</span>
+<span class="cmd">esxcli network ip interface list</span>         <span class="cmt"># IP management</span></pre>
+    </div>
+
+    <h3>PowerCLI — VMware da PowerShell</h3>
+    <div class="single-code">
+      <div class="code-header win"><span class="dot"></span> VMware PowerCLI (PowerShell)</div>
+      <pre><span class="cmt"># Installa e connetti</span>
+<span class="cmd">Install-Module VMware.PowerCLI -Scope CurrentUser</span>
+<span class="cmd">Connect-VIServer -Server vcenter.azienda.local -User admin@vsphere.local</span>
+
+<span class="cmt"># Lista VM per host</span>
+<span class="cmd">Get-VM | Select Name, PowerState, NumCpu, MemoryGB, VMHost</span>
+
+<span class="cmt"># Crea snapshot prima di una modifica importante</span>
+<span class="cmd">New-Snapshot -VM "SERVER-WEB01" -Name "Pre-Update-$(Get-Date -Format 'yyyy-MM-dd')" -Description "Snapshot pre-patch"</span>
+
+<span class="cmt"># vMotion — sposta VM su altro host</span>
+<span class="cmd">Move-VM -VM "SERVER-WEB01" -Destination (Get-VMHost "esxi02.azienda.local")</span>
+
+<span class="cmt"># Report utilizzo risorse</span>
+<span class="cmd">Get-VM | Get-Stat -Cpu -Memory -MaxSamples 1 | Select Entity, MetricId, Value</span>
+
+<span class="cmt"># Aumenta RAM a VM (richiede spegnimento con HW memory hot-add off)</span>
+<span class="cmd">Set-VM -VM "SERVER-APP01" -MemoryGB 16 -Confirm:$false</span>
+
+<span class="cmt"># Lista snapshot vecchi (> 7 giorni) — da rimuovere!</span>
+<span class="cmd">Get-VM | Get-Snapshot | Where {$_.Created -lt (Get-Date).AddDays(-7)} | Select VM, Name, Created, SizeGB</span></pre>
+    </div>
+
+    <div class="alert alert-danger">
+      <strong>🚨 Regola Aurea sugli Snapshot</strong>
+      Gli snapshot VMware NON sono backup! Uno snapshot occupa spazio nel datastore e degrada le performance nel tempo.
+      Rimuovere sempre gli snapshot dopo 24-48 ore. Uno snapshot non rimosso per settimane può causare crash del
+      datastore e perdita di dati.
+    </div>
+
+    <h3>Operazioni Frequenti VMware</h3>
+    <table class="proc-table">
+      <tr>
+        <th>Operazione</th>
+        <th>Quando</th>
+        <th>Procedura</th>
+      </tr>
+      <tr>
+        <td>Snapshot pre-patching</td>
+        <td>Prima di aggiornare il SO</td>
+        <td>Crea snapshot → applica patch → testa → se ok elimina snapshot</td>
+      </tr>
+      <tr>
+        <td>vMotion (migrazione live)</td>
+        <td>Manutenzione host / bilanciamento</td>
+        <td>Verifica compatibilità CPU → seleziona destinazione → avvia migrazione</td>
+      </tr>
+      <tr>
+        <td>Expand disco VM</td>
+        <td>Disco quasi pieno</td>
+        <td>Spegni VM → espandi VMDK → avvia VM → espandi partizione da OS</td>
+      </tr>
+      <tr>
+        <td>Clona VM</td>
+        <td>Test, nuovi server simili</td>
+        <td>Right-click VM → Clone → seleziona template o clone completo</td>
+      </tr>
+      <tr>
+        <td>Recovery da snapshot</td>
+        <td>Patch andata male</td>
+        <td>Revert to snapshot → verifica funzionamento → poi rimuovi snapshot</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 8. LINUX SERVER -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section" id="linux">
+    <div class="section-label">Capitolo 8</div>
+    <h2>Linux Server — Amministrazione</h2>
+    <p>Ubuntu Server, Debian, Rocky Linux e CentOS/RHEL sono distribuzioni comuni in ambiente aziendale. Il sistemista
+      di 2° livello deve saper gestire servizi, storage, utenti e sicurezza su sistemi Linux.</p>
+
+    <h3>Gestione Utenti e Permessi</h3>
+    <div class="single-code">
+      <div class="code-header linux"><span class="dot"></span> Linux — Gestione Utenti</div>
+      <pre><span class="cmt"># Crea utente con home directory</span>
+<span class="cmd">useradd -m -s /bin/bash mrossi</span>
+<span class="cmd">passwd mrossi</span>                     <span class="cmt"># imposta password</span>
+
+<span class="cmt"># Crea utente admin (con sudo)</span>
+<span class="cmd">useradd -m -G sudo mrossi</span>        <span class="cmt"># Debian/Ubuntu</span>
+<span class="cmd">useradd -m -G wheel mrossi</span>       <span class="cmt"># RHEL/Rocky</span>
+
+<span class="cmt"># Modifica utente</span>
+<span class="cmd">usermod -aG docker mrossi</span>        <span class="cmt"># aggiungi a gruppo</span>
+<span class="cmd">usermod -L mrossi</span>                 <span class="cmt"># blocca account</span>
+<span class="cmd">usermod -U mrossi</span>                 <span class="cmt"># sblocca account</span>
+
+<span class="cmt"># Lista utenti del sistema</span>
+<span class="cmd">cat /etc/passwd | grep -v nologin</span>
+<span class="cmd">getent passwd</span>
+
+<span class="cmt"># Permessi file (chmod)</span>
+<span class="cmd">chmod 755 /var/www/html</span>          <span class="cmt"># rwxr-xr-x</span>
+<span class="cmd">chmod 644 /etc/nginx/nginx.conf</span>  <span class="cmt"># rw-r--r--</span>
+<span class="cmd">chmod -R 770 /opt/app</span>            <span class="cmt"># ricorsivo</span>
+
+<span class="cmt"># Proprietà file</span>
+<span class="cmd">chown mrossi:mrossi /home/mrossi/file.txt</span>
+<span class="cmd">chown -R www-data:www-data /var/www/html</span></pre>
+    </div>
+
+    <h3>Gestione Servizi (systemd)</h3>
+    <div class="code-comparison">
+      <div class="code-block">
+        <div class="code-header win"><span class="dot"></span> Windows — Services</div>
+        <pre><span class="cmd">Start-Service nginx</span>
+<span class="cmd">Stop-Service nginx</span>
+<span class="cmd">Restart-Service nginx</span>
+<span class="cmd">Get-Service nginx</span>
+<span class="cmd">Set-Service nginx -StartupType Automatic</span>
+<span class="cmt"># CMD equivalenti</span>
+<span class="cmd">sc start nginx</span>
+<span class="cmd">sc stop nginx</span>
+<span class="cmd">sc query nginx</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header linux"><span class="dot"></span> Linux — systemd</div>
+        <pre><span class="cmd">systemctl start nginx</span>
+<span class="cmd">systemctl stop nginx</span>
+<span class="cmd">systemctl restart nginx</span>
+<span class="cmd">systemctl reload nginx</span>   <span class="cmt"># reload config</span>
+<span class="cmd">systemctl status nginx</span>
+<span class="cmd">systemctl enable nginx</span>   <span class="cmt"># avvio automatico</span>
+<span class="cmd">systemctl disable nginx</span>
+<span class="cmd">systemctl list-units --type=service --state=running</span></pre>
+      </div>
+    </div>
+
+    <h3>Analisi Log Linux</h3>
+    <div class="single-code">
+      <div class="code-header linux"><span class="dot"></span> Linux — Log Fondamentali</div>
+      <pre><span class="cmt"># Log di sistema (systemd journal)</span>
+<span class="cmd">journalctl -xe</span>                    <span class="cmt"># ultimi log con errori</span>
+<span class="cmd">journalctl -u nginx --since today</span> <span class="cmt"># log servizio specifico</span>
+<span class="cmd">journalctl -f</span>                     <span class="cmt"># log in tempo reale (follow)</span>
+<span class="cmd">journalctl -p err -b</span>              <span class="cmt"># solo errori dal boot corrente</span>
+
+<span class="cmt"># File di log classici</span>
+<span class="cmd">tail -f /var/log/syslog</span>           <span class="cmt"># sistema (Debian/Ubuntu)</span>
+<span class="cmd">tail -f /var/log/messages</span>         <span class="cmt"># sistema (RHEL/Rocky)</span>
+<span class="cmd">tail -f /var/log/auth.log</span>         <span class="cmt"># autenticazioni</span>
+<span class="cmd">grep "Failed password" /var/log/auth.log | tail -20</span>  <span class="cmt"># login falliti</span>
+<span class="cmd">grep "sshd" /var/log/auth.log | grep "Accepted"</span>       <span class="cmt"># accessi SSH riusciti</span>
+
+<span class="cmt"># Rotazione log</span>
+<span class="cmd">logrotate -f /etc/logrotate.conf</span>  <span class="cmt"># forza rotazione manuale</span></pre>
+    </div>
+
+    <h3>Gestione Pacchetti</h3>
+    <div class="code-comparison">
+      <div class="code-block">
+        <div class="code-header linux"><span class="dot"></span> Debian / Ubuntu (APT)</div>
+        <pre><span class="cmd">apt update</span>                <span class="cmt"># aggiorna lista pacchetti</span>
+<span class="cmd">apt upgrade -y</span>            <span class="cmt"># aggiorna tutto</span>
+<span class="cmd">apt install nginx -y</span>
+<span class="cmd">apt remove nginx</span>
+<span class="cmd">apt purge nginx</span>           <span class="cmt"># rimuovi + config</span>
+<span class="cmd">apt autoremove</span>            <span class="cmt"># rimuovi dipendenze inutili</span>
+<span class="cmd">apt list --installed</span>
+<span class="cmd">apt search "nome-pacchetto"</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header linux"><span class="dot"></span> RHEL / Rocky / CentOS (DNF)</div>
+        <pre><span class="cmd">dnf update</span>
+<span class="cmd">dnf upgrade -y</span>
+<span class="cmd">dnf install nginx -y</span>
+<span class="cmd">dnf remove nginx</span>
+<span class="cmd">dnf list installed</span>
+<span class="cmd">dnf search nginx</span>
+<span class="cmt"># Gestione repo</span>
+<span class="cmd">dnf repolist</span>
+<span class="cmd">dnf config-manager --add-repo URL</span></pre>
+      </div>
+    </div>
+
+    <h3>Cron — Task Scheduling</h3>
+    <div class="code-comparison">
+      <div class="code-block">
+        <div class="code-header win"><span class="dot"></span> Windows — Task Scheduler</div>
+        <pre><span class="cmt"># PowerShell — Crea Task pianificato</span>
+<span class="cmd">$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File C:\Scripts\backup.ps1"</span>
+<span class="cmd">$trigger = New-ScheduledTaskTrigger -Daily -At 2am</span>
+<span class="cmd">Register-ScheduledTask -TaskName "DailyBackup" -Action $action -Trigger $trigger -RunLevel Highest</span>
+<span class="cmt"># CMD</span>
+<span class="cmd">schtasks /create /tn "Backup" /tr "C:\backup.bat" /sc daily /st 02:00</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header linux"><span class="dot"></span> Linux — Crontab</div>
+        <pre><span class="cmt"># Edita crontab utente corrente</span>
+<span class="cmd">crontab -e</span>
+<span class="cmt"># Formato: min ora giorno mese dow comando</span>
+<span class="cmt"># Backup ogni giorno alle 02:00</span>
+<span class="val">0 2 * * * /opt/scripts/backup.sh >> /var/log/backup.log 2>&1</span>
+<span class="cmt"># Ogni lunedì alle 03:00</span>
+<span class="val">0 3 * * 1 /opt/scripts/weekly.sh</span>
+<span class="cmt"># Lista crontab</span>
+<span class="cmd">crontab -l</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 9. SSH -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section" id="ssh">
+    <div class="section-label">Capitolo 9</div>
+    <h2>SSH — Accesso Remoto Sicuro a Server e Switch</h2>
+    <p>SSH (Secure Shell) è il protocollo standard per l'accesso remoto sicuro a server Linux, Unix, apparati di rete
+      (switch/router Cisco, HP, Juniper) e anche server Windows. È uno strumento fondamentale per il sistemista di 2°
+      livello.</p>
+
+    <h3>SSH da Linux</h3>
+    <div class="single-code">
+      <div class="code-header linux"><span class="dot"></span> Linux — SSH Client</div>
+      <pre><span class="cmt">━━━ CONNESSIONI BASE ━━━</span>
+<span class="cmt"># Connessione standard (porta 22)</span>
+<span class="cmd">ssh utente@192.168.1.10</span>
+<span class="cmd">ssh mrossi@server01.azienda.local</span>
+
+<span class="cmt"># Porta SSH personalizzata</span>
+<span class="cmd">ssh -p 2222 utente@192.168.1.10</span>
+
+<span class="cmt"># Connessione con chiave privata</span>
+<span class="cmd">ssh -i ~/.ssh/id_rsa utente@192.168.1.10</span>
+<span class="cmd">ssh -i ~/.ssh/chiave_aziendale.pem admin@server01</span>
+
+<span class="cmt">━━━ ACCESSO A SWITCH DI RETE ━━━</span>
+<span class="cmt"># Switch Cisco (stesso comando)</span>
+<span class="cmd">ssh admin@192.168.1.254</span>
+<span class="cmt"># Algoritmi più vecchi per switch legacy</span>
+<span class="cmd">ssh -oKexAlgorithms=+diffie-hellman-group1-sha1 -c aes128-cbc admin@192.168.1.254</span>
+<span class="cmt"># Switch HP/Aruba</span>
+<span class="cmd">ssh manager@10.0.0.1</span>
+
+<span class="cmt">━━━ CHIAVI SSH ━━━</span>
+<span class="cmt"># Genera coppia di chiavi</span>
+<span class="cmd">ssh-keygen -t ed25519 -C "mrossi@azienda.com"</span>
+<span class="cmd">ssh-keygen -t rsa -b 4096 -C "mrossi@azienda.com"</span>
+
+<span class="cmt"># Copia chiave pubblica su server remoto (login senza password)</span>
+<span class="cmd">ssh-copy-id utente@192.168.1.10</span>
+<span class="cmd">ssh-copy-id -i ~/.ssh/id_ed25519.pub utente@192.168.1.10</span>
+
+<span class="cmt">━━━ SSH CONFIG (~/.ssh/config) ━━━</span>
+<span class="cmt"># Definisci host nel file config</span>
+<span class="cmd">cat ~/.ssh/config</span>
+
+<span class="val">Host dc01
+    HostName 192.168.10.10
+    User administrator
+    Port 22
+
+Host switch-core
+    HostName 192.168.1.254
+    User admin
+    KexAlgorithms +diffie-hellman-group1-sha1
+    Ciphers +aes128-cbc</span>
+
+<span class="cmt"># Poi connetti semplicemente con:</span>
+<span class="cmd">ssh dc01</span>
+<span class="cmd">ssh switch-core</span>
+
+<span class="cmt">━━━ TRASFERIMENTO FILE ━━━</span>
+<span class="cmt"># Copia file da locale a remoto</span>
+<span class="cmd">scp /home/mrossi/file.txt utente@192.168.1.10:/tmp/</span>
+
+<span class="cmt"># Copia file da remoto a locale</span>
+<span class="cmd">scp utente@192.168.1.10:/var/log/syslog /home/mrossi/</span>
+
+<span class="cmt"># Copia cartella intera (ricorsiva)</span>
+<span class="cmd">scp -r /opt/app utente@192.168.1.10:/opt/</span>
+
+<span class="cmt"># rsync — più efficiente per sincronizzazione</span>
+<span class="cmd">rsync -avz /opt/app/ utente@192.168.1.10:/opt/app/</span>
+
+<span class="cmt">━━━ TUNNELING SSH ━━━</span>
+<span class="cmt"># Port forwarding locale (accedi a servizio remoto in locale)</span>
+<span class="cmt"># Es: accedi a DB MySQL su server remoto da localhost:3307</span>
+<span class="cmd">ssh -L 3307:localhost:3306 utente@192.168.1.10</span>
+
+<span class="cmt"># Jump host (accedi a server B attraverso server A)</span>
+<span class="cmd">ssh -J utente@jumphost.azienda.com utente@server-interno.local</span>
+
+<span class="cmt">━━━ OPERAZIONI REMOTE ━━━</span>
+<span class="cmt"># Esegui comando remoto senza sessione interattiva</span>
+<span class="cmd">ssh utente@server01 "df -h"</span>
+<span class="cmd">ssh utente@server01 "sudo systemctl restart nginx"</span>
+<span class="cmd">ssh utente@server01 "cat /var/log/nginx/error.log | tail -50"</span></pre>
+    </div>
+
+    <h3>SSH da Windows</h3>
+    <div class="single-code">
+      <div class="code-header win"><span class="dot"></span> Windows — SSH Client (PowerShell / CMD / Windows Terminal)
+      </div>
+      <pre><span class="cmt"># Windows 10/11 ha OpenSSH integrato</span>
+<span class="cmt"># Verifica installazione</span>
+<span class="cmd">Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'</span>
+<span class="cmt"># Installa se mancante</span>
+<span class="cmd">Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0</span>
+
+<span class="cmt">━━━ CONNESSIONI ━━━</span>
+<span class="cmt"># Stessa sintassi Linux!</span>
+<span class="cmd">ssh utente@192.168.1.10</span>
+<span class="cmd">ssh -p 2222 admin@switch01</span>
+<span class="cmd">ssh -i C:\Users\mrossi\.ssh\id_rsa utente@server01</span>
+
+<span class="cmt">━━━ CHIAVI SSH SU WINDOWS ━━━</span>
+<span class="cmt"># Genera chiavi</span>
+<span class="cmd">ssh-keygen -t ed25519 -C "mrossi@azienda.com"</span>
+<span class="cmt"># Chiavi salvate in: C:\Users\mrossi\.ssh\</span>
+
+<span class="cmt"># Copia chiave pubblica su server Linux</span>
+<span class="cmd">type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh utente@server01 "cat >> ~/.ssh/authorized_keys"</span>
+
+<span class="cmt">━━━ SSH CONFIG SU WINDOWS ━━━</span>
+<span class="cmt"># File: C:\Users\mrossi\.ssh\config</span>
+<span class="cmd">notepad $env:USERPROFILE\.ssh\config</span>
+<span class="cmt"># Stessa sintassi del config Linux!</span>
+
+<span class="cmt">━━━ STRUMENTI ALTERNATIVI WINDOWS ━━━</span>
+<span class="cmt"># PuTTY (classico, GUI)</span>
+<span class="cmt"># putty.exe -ssh utente@server01 -P 22</span>
+
+<span class="cmt"># Windows Terminal — il migliore per uso quotidiano</span>
+<span class="cmt"># Supporta tab, profili, SSH nativo</span>
+
+<span class="cmt"># MobaXterm — tool completo per sysadmin Windows</span>
+<span class="cmt"># SSH + SFTP + X11 + tunneling in un'unica app</span>
+
+<span class="cmt">━━━ SCP DA WINDOWS ━━━</span>
+<span class="cmd">scp C:\Users\mrossi\file.txt utente@192.168.1.10:/tmp/</span>
+<span class="cmd">scp utente@192.168.1.10:/var/log/syslog C:\Logs\</span>
+
+<span class="cmt">━━━ AVVIO SERVIZIO SSH SU WINDOWS SERVER ━━━</span>
+<span class="cmt"># Abilita OpenSSH Server su Windows Server</span>
+<span class="cmd">Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0</span>
+<span class="cmd">Start-Service sshd</span>
+<span class="cmd">Set-Service -Name sshd -StartupType Automatic</span>
+<span class="cmt"># Configura firewall</span>
+<span class="cmd">New-NetFirewallRule -Name sshd -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22</span></pre>
+    </div>
+
+    <div class="alert alert-tip">
+      <strong>💡 Sicurezza SSH — Best Practice</strong>
+      Disabilita il login SSH con password e usa solo chiavi SSH. Cambia la porta da 22 a una porta non standard (es.
+      2222). Configura Fail2Ban su Linux per bloccare IP dopo tentativi falliti. Limita gli utenti autorizzati via SSH
+      nel file /etc/ssh/sshd_config con <code>AllowUsers mrossi sysadmin</code>.
+    </div>
+
+    <h3>Configurazione SSH Server — /etc/ssh/sshd_config</h3>
+    <div class="single-code">
+      <div class="code-header linux"><span class="dot"></span> Linux — /etc/ssh/sshd_config (configurazione sicura)
+      </div>
+      <pre><span class="cmt"># Porta non standard (riduce scan automatici)</span>
+<span class="val">Port 2222</span>
+
+<span class="cmt"># Solo IPv4</span>
+<span class="val">AddressFamily inet</span>
+
+<span class="cmt"># Disabilita login root diretto</span>
+<span class="val">PermitRootLogin no</span>
+
+<span class="cmt"># Solo autenticazione con chiave (no password)</span>
+<span class="val">PasswordAuthentication no</span>
+<span class="val">PubkeyAuthentication yes</span>
+
+<span class="cmt"># Utenti autorizzati</span>
+<span class="val">AllowUsers mrossi sysadmin deploy</span>
+
+<span class="cmt"># Timeout sessione inattiva (10 min)</span>
+<span class="val">ClientAliveInterval 600</span>
+<span class="val">ClientAliveCountMax 3</span>
+
+<span class="cmt"># Banner di avviso</span>
+<span class="val">Banner /etc/ssh/banner.txt</span>
+
+<span class="cmt"># Applica modifiche</span>
+<span class="cmd">sshd -t</span>               <span class="cmt"># test configurazione</span>
+<span class="cmd">systemctl reload sshd</span> <span class="cmt"># applica senza disconnettere</span></pre>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 10. REMOTE DESKTOP -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section" id="rdp">
+    <div class="section-label">Capitolo 10</div>
+    <h2>Remote Desktop — Accesso GUI a Windows Server</h2>
+    <p>Il Remote Desktop Protocol (RDP) permette di accedere graficamente a un server Windows o a una VM con interfaccia
+      grafica (GUI). È essenziale per gestire Windows Server Core, Server 2019/2022 e VM Windows su VMware.</p>
+
+    <h3>Connessione RDP da Windows</h3>
+    <div class="single-code">
+      <div class="code-header win"><span class="dot"></span> Windows — Remote Desktop (mstsc.exe)</div>
+      <pre><span class="cmt"># Avvia Remote Desktop Connection (classico)</span>
+<span class="cmd">mstsc</span>
+<span class="cmd">mstsc /v:server01.azienda.local</span>
+<span class="cmd">mstsc /v:192.168.10.10</span>
+<span class="cmd">mstsc /v:192.168.10.10:3389</span>
+
+<span class="cmt"># Connessione in fullscreen</span>
+<span class="cmd">mstsc /v:server01 /f</span>
+
+<span class="cmt"># Multi-monitor</span>
+<span class="cmd">mstsc /v:server01 /multimon</span>
+
+<span class="cmt"># Salva connessione in file .rdp</span>
+<span class="cmd">mstsc /v:server01 /edit</span>
+
+<span class="cmt"># Admin mode (bypassa limite sessioni RDP)</span>
+<span class="cmd">mstsc /v:server01 /admin</span>
+
+<span class="cmt">━━━ POWERSHELL — RDP MANAGEMENT ━━━</span>
+<span class="cmt"># Abilita RDP su server remoto tramite PS remoting</span>
+<span class="cmd">Invoke-Command -ComputerName server01 -ScriptBlock {
+    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+    Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+}</span>
+
+<span class="cmt"># Verifica se RDP è attivo su host remoto</span>
+<span class="cmd">Test-NetConnection -ComputerName server01 -Port 3389</span>
+
+<span class="cmt"># Lista sessioni RDP attive su server</span>
+<span class="cmd">Invoke-Command -ComputerName server01 -ScriptBlock { quser }</span>
+<span class="cmd">Invoke-Command -ComputerName server01 -ScriptBlock { query session }</span>
+
+<span class="cmt"># Disconnetti sessione specifica (ID dalla quser)</span>
+<span class="cmd">Invoke-Command -ComputerName server01 -ScriptBlock { logoff 2 }</span></pre>
+    </div>
+
+    <h3>Connessione RDP da Linux</h3>
+    <div class="single-code">
+      <div class="code-header linux"><span class="dot"></span> Linux — Client RDP (xfreerdp / Remmina)</div>
+      <pre><span class="cmt"># Installa xfreerdp (command line)</span>
+<span class="cmd">sudo apt install freerdp2-x11</span>     <span class="cmt"># Ubuntu/Debian</span>
+<span class="cmd">sudo dnf install freerdp</span>          <span class="cmt"># RHEL/Rocky</span>
+
+<span class="cmt"># Connessione base</span>
+<span class="cmd">xfreerdp /v:192.168.10.10 /u:administrator /p:Password123</span>
+
+<span class="cmt"># Connessione con dominio</span>
+<span class="cmd">xfreerdp /v:server01.azienda.local /d:AZIENDA /u:mrossi /p:Password123</span>
+
+<span class="cmt"># Fullscreen</span>
+<span class="cmd">xfreerdp /v:server01 /u:admin /f</span>
+
+<span class="cmt"># Risoluzione personalizzata</span>
+<span class="cmd">xfreerdp /v:server01 /u:admin /w:1920 /h:1080</span>
+
+<span class="cmt"># Abilita clipboard tra locale e remoto</span>
+<span class="cmd">xfreerdp /v:server01 /u:admin /clipboard</span>
+
+<span class="cmt"># Condividi cartella locale su server remoto</span>
+<span class="cmd">xfreerdp /v:server01 /u:admin /drive:share,/home/mrossi/docs</span>
+
+<span class="cmt"># Ignora errori certificato (lab/test only)</span>
+<span class="cmd">xfreerdp /v:server01 /u:admin /cert-ignore</span>
+
+<span class="cmt"># Remmina (GUI — più comoda per uso quotidiano)</span>
+<span class="cmd">sudo apt install remmina remmina-plugin-rdp</span>
+<span class="cmd">remmina</span>   <span class="cmt"># avvia GUI — aggiungi connessioni con profili salvati</span></pre>
+    </div>
+
+    <h3>Configurazione RDP su Windows Server</h3>
+    <ol class="steps">
+      <li><span class="step-num">1</span>
+        <p><strong>Abilita Remote Desktop:</strong> Server Manager → Local Server → Remote Desktop → Enable → Allow
+          connections only from computers running Remote Desktop with NLA.</p>
+      </li>
+      <li><span class="step-num">2</span>
+        <p><strong>Configura Firewall:</strong> Windows Defender Firewall → Inbound Rules → Remote Desktop (TCP-In) →
+          Enable. Limita gli IP sorgente autorizzati.</p>
+      </li>
+      <li><span class="step-num">3</span>
+        <p><strong>Aggiungi utenti autorizzati:</strong> System Properties → Remote tab → Select Users → aggiungi
+          gruppi/utenti specifici. Non usare mai "Everyone".</p>
+      </li>
+      <li><span class="step-num">4</span>
+        <p><strong>Certificato SSL:</strong> Per RDP sicuro, associa un certificato SSL al server RDS tramite Group
+          Policy: Computer Configuration → Administrative Templates → Windows Components → Remote Desktop Services.</p>
+      </li>
+      <li><span class="step-num">5</span>
+        <p><strong>Cambia porta RDP (opzionale):</strong> Regedit → HKLM\SYSTEM\CurrentControlSet\Control\Terminal
+          Server\WinStations\RDP-Tcp → PortNumber → cambia da 3389 a porta personalizzata. Aggiorna regola firewall di
+          conseguenza.</p>
+      </li>
+    </ol>
+
+    <h3>RDP Gateway — Accesso Sicuro dall'Esterno</h3>
+    <div class="alert alert-info">
+      <strong>ℹ RD Gateway</strong>
+      Non esporre MAI la porta 3389 direttamente su internet! Usa sempre un RD Gateway o una VPN. L'RD Gateway permette
+      connessioni RDP cifrate su HTTPS (porta 443) dall'esterno, senza esporre il server RDP direttamente.
+      Configurazione: Server Manager → Add Roles → Remote Desktop Services → RD Gateway.
+    </div>
+
+    <div class="single-code">
+      <div class="code-header win"><span class="dot"></span> Windows — Connessione tramite RD Gateway</div>
+      <pre><span class="cmt"># mstsc con opzione Gateway</span>
+<span class="cmd">mstsc</span>
+<span class="cmt"># → Advanced tab → Connect from anywhere</span>
+<span class="cmt"># → Server: rdgateway.azienda.com:443</span>
+
+<span class="cmt"># Da riga di comando con file .rdp</span>
+<span class="cmt"># Crea file server.rdp:</span>
+<span class="val">full address:s:server01.azienda.local
+gatewayhostname:s:rdgateway.azienda.com
+gatewayusagemethod:i:1
+username:s:AZIENDA\mrossi</span>
+<span class="cmt"># Poi apri:</span>
+<span class="cmd">mstsc server.rdp</span></pre>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 11. BACKUP -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section" id="backup">
+    <div class="section-label">Capitolo 11</div>
+    <h2>Backup & Disaster Recovery</h2>
+    <p>Il backup è la responsabilità più critica del sistemista. Un sistema di backup non testato non è un backup. La
+      regola 3-2-1 è lo standard minimo del settore.</p>
+
+    <h3>La Regola 3-2-1</h3>
+    <div class="card-grid" style="grid-template-columns: repeat(3,1fr)">
+      <div class="card" style="border-color:rgba(0,255,157,0.3)">
+        <div class="card-icon"
+          style="font-size:3rem; color:var(--green); font-family:'JetBrains Mono'; font-weight:900">3</div>
+        <h4 style="color:var(--green)">Copie dei Dati</h4>
+        <p>Mantieni almeno 3 copie dei dati: l'originale più 2 backup. La probabilità di perdita di tutte e 3 le copie è
+          praticamente nulla.</p>
+      </div>
+      <div class="card" style="border-color:rgba(0,212,255,0.3)">
+        <div class="card-icon"
+          style="font-size:3rem; color:var(--accent); font-family:'JetBrains Mono'; font-weight:900">2</div>
+        <h4 style="color:var(--accent)">Tipi di Supporto</h4>
+        <p>Su almeno 2 supporti diversi (es. NAS locale + nastro, o disco + cloud). Guasti hardware tendono a colpire lo
+          stesso tipo di supporto.</p>
+      </div>
+      <div class="card" style="border-color:rgba(255,107,53,0.3)">
+        <div class="card-icon"
+          style="font-size:3rem; color:var(--accent3); font-family:'JetBrains Mono'; font-weight:900">1</div>
+        <h4 style="color:var(--accent3)">Copia Offsite</h4>
+        <p>Almeno 1 copia fuori sede (offsite o cloud). Protegge da incendio, alluvione, furto e ransomware che colpisce
+          la rete aziendale.</p>
+      </div>
+    </div>
+
+    <h3>Tipi di Backup</h3>
+    <table class="proc-table">
+      <tr>
+        <th>Tipo</th>
+        <th>Descrizione</th>
+        <th>Tempo Backup</th>
+        <th>Tempo Restore</th>
+        <th>Spazio</th>
+      </tr>
+      <tr>
+        <td>Full</td>
+        <td>Copia completa di tutti i dati</td>
+        <td>Lungo</td>
+        <td>Breve</td>
+        <td>Alto</td>
+      </tr>
+      <tr>
+        <td>Incrementale</td>
+        <td>Solo modifiche dall'ultimo backup (full o incr.)</td>
+        <td>Breve</td>
+        <td>Lungo (catena)</td>
+        <td>Basso</td>
+      </tr>
+      <tr>
+        <td>Differenziale</td>
+        <td>Solo modifiche dall'ultimo full</td>
+        <td>Medio</td>
+        <td>Medio</td>
+        <td>Medio</td>
+      </tr>
+      <tr>
+        <td>Snapshot VM</td>
+        <td>Punto di ripristino della VM intera</td>
+        <td>Minuti</td>
+        <td>Minuti</td>
+        <td>Variabile</td>
+      </tr>
+      <tr>
+        <td>Replica</td>
+        <td>Copia in tempo reale (es. DFS, vSAN)</td>
+        <td>Continuo</td>
+        <td>Immediato</td>
+        <td>Alto (2x)</td>
+      </tr>
+    </table>
+
+    <h3>Windows Server Backup — Comandi</h3>
+    <div class="single-code">
+      <div class="code-header win"><span class="dot"></span> PowerShell — Windows Server Backup (wbadmin)</div>
+      <pre><span class="cmt"># Backup completo del sistema (bare metal)</span>
+<span class="cmd">wbadmin start backup -backuptarget:\\NAS01\Backup -allCritical -quiet</span>
+
+<span class="cmt"># Backup di un volume specifico</span>
+<span class="cmd">wbadmin start backup -backuptarget:E: -include:C: -quiet</span>
+
+<span class="cmt"># Lista versioni backup disponibili</span>
+<span class="cmd">wbadmin get versions</span>
+
+<span class="cmt"># Ripristino file singolo</span>
+<span class="cmd">wbadmin start recovery -version:MM/DD/YYYY-HH:MM -itemType:File -items:C:\Data\file.txt -recursive -overwrite:Yes</span>
+
+<span class="cmt"># Backup del System State (AD, registro, boot)</span>
+<span class="cmd">wbadmin start systemstatebackup -backuptarget:E:</span>
+
+<span class="cmt">━━━ SHADOW COPY (VSS) ━━━</span>
+<span class="cmt"># Crea shadow copy manuale</span>
+<span class="cmd">vssadmin create shadow /for=C:</span>
+
+<span class="cmt"># Lista shadow copy esistenti</span>
+<span class="cmd">vssadmin list shadows</span>
+
+<span class="cmt"># Elimina shadow copy vecchie</span>
+<span class="cmd">vssadmin delete shadows /for=C: /oldest</span></pre>
+    </div>
+
+    <h3>Backup Linux — rsync e tar</h3>
+    <div class="single-code">
+      <div class="code-header linux"><span class="dot"></span> Linux — Backup con rsync e tar</div>
+      <pre><span class="cmt"># rsync — backup incrementale su NAS/server remoto</span>
+<span class="cmd">rsync -avz --delete /data/ utente@nas01:/backup/server01/data/</span>
+<span class="cmd">rsync -avz --delete --exclude='*.tmp' /var/www/ utente@nas01:/backup/www/</span>
+
+<span class="cmt"># rsync con log e stats</span>
+<span class="cmd">rsync -avz --stats --log-file=/var/log/backup_rsync.log /data/ /mnt/backup/</span>
+
+<span class="cmt"># tar — archivio compresso</span>
+<span class="cmd">tar -czf /backup/data-$(date +%Y%m%d).tar.gz /data/</span>
+<span class="cmd">tar -czf /backup/etc-$(date +%Y%m%d).tar.gz /etc/</span>
+
+<span class="cmt"># Ripristino tar</span>
+<span class="cmd">tar -xzf /backup/data-20250101.tar.gz -C /</span>
+
+<span class="cmt"># Backup database MySQL/MariaDB</span>
+<span class="cmd">mysqldump -u root -p --all-databases | gzip > /backup/mysql-$(date +%Y%m%d).sql.gz</span>
+<span class="cmd">mysqldump -u root -p database_name > /backup/db_name.sql</span>
+
+<span class="cmt"># Ripristino MySQL</span>
+<span class="cmd">mysql -u root -p database_name < /backup/db_name.sql</span>
+
+<span class="cmt"># Script di backup automatico (da mettere in cron)</span>
+<span class="cmd">cat /opt/scripts/backup.sh</span></pre>
+    </div>
+
+    <div class="alert alert-danger">
+      <strong>🚨 Regola Fondamentale</strong>
+      Testa il restore almeno una volta al mese! Molte aziende hanno scoperto di non avere backup validi solo al momento
+      del disastro. Documenta la procedura di restore e testa che i dati siano effettivamente recuperabili. Un backup
+      non testato vale zero.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 12. MONITORING -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section" id="monitoring">
+    <div class="section-label">Capitolo 12</div>
+    <h2>Monitoring & Alerting</h2>
+    <p>Il monitoraggio proattivo è la differenza tra un sistemista reattivo (che risolve i problemi quando accadono) e
+      uno proattivo (che li previene). Il sistemista di 2° livello deve configurare e gestire sistemi di monitoring.</p>
+
+    <h3>Stack di Monitoring Comune</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h4>Zabbix</h4>
+        <p>Soluzione enterprise open source per monitoring di server, VM, network, applicazioni. Supporta agent, SNMP,
+          JMX. Alerting via email, SMS, Slack. Ideale per ambienti misti Windows/Linux.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <h4>Grafana + Prometheus</h4>
+        <p>Stack moderno per metriche. Prometheus raccoglie dati in time series, Grafana li visualizza in dashboard.
+          Ottimo per infrastrutture container/Kubernetes e ambienti Linux.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔍</div>
+        <h4>PRTG</h4>
+        <p>Soluzione Windows-native molto usata nelle PMI italiane. Facile da configurare, supporta SNMP, WMI, HTTP,
+          ping. Licenza per sensori. Ottima per chi inizia con il monitoring.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💡</div>
+        <h4>Nagios / Icinga</h4>
+        <p>Piattaforma di monitoring classica, molto estensibile tramite plugin. Icinga2 è il fork moderno con REST API.
+          Forte su monitoring di servizi e availability.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">☁</div>
+        <h4>Azure Monitor</h4>
+        <p>Per ambienti cloud e ibridi Microsoft. Integrato con M365, Azure VMs, on-premise via Azure Arc. Log
+          Analytics, Application Insights, alert automatici.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📱</div>
+        <h4>Uptime Kuma</h4>
+        <p>Tool open source leggero e self-hosted per monitoring uptime di siti web, API, porte TCP. Perfetto come
+          complemento per verificare la disponibilità di servizi esposti su internet.</p>
+      </div>
+    </div>
+
+    <h3>Cosa Monitorare — Checklist</h3>
+    <div class="highlight-box">
+      <h3>🎯 KPI da monitorare su ogni server</h3>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+          <h4 style="margin-top:0">Sistema</h4>
+          <ul class="checklist">
+            <li>CPU usage &gt; 80% per 5+ minuti</li>
+            <li>RAM libera &lt; 10%</li>
+            <li>Disco &gt; 85% di utilizzo</li>
+            <li>Uptime / reboot non pianificati</li>
+            <li>Servizi critici stopped</li>
+            <li>Temperatura CPU/Hardware</li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="margin-top:0">Rete & Sicurezza</h4>
+          <ul class="checklist">
+            <li>Latenza &gt; 100ms verso gateway</li>
+            <li>Packet loss &gt; 1%</li>
+            <li>Bandwidth saturata (&gt;90%)</li>
+            <li>Login falliti (brute force)</li>
+            <li>Certificati SSL in scadenza (&lt;30gg)</li>
+            <li>Aggiornamenti di sicurezza in attesa</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <h3>Comandi di Monitoring Rapido da Terminale</h3>
+    <div class="code-comparison">
+      <div class="code-block">
+        <div class="code-header win"><span class="dot"></span> Windows — Monitor Rapido</div>
+        <pre><span class="cmt"># CPU, RAM, Disco in una volta</span>
+<span class="cmd">Get-Counter '\Processor(_Total)\% Processor Time', '\Memory\Available MBytes', '\PhysicalDisk(_Total)\% Disk Time' -Continuous -SampleInterval 5</span>
+
+<span class="cmt"># Servizi critici stopped</span>
+<span class="cmd">Get-Service | Where {$_.StartType -eq 'Automatic' -and $_.Status -ne 'Running'}</span>
+
+<span class="cmt"># Spazio dischi di tutti i server del dominio</span>
+<span class="cmd">$computers = Get-ADComputer -Filter {OperatingSystem -like "*Server*"} | Select -ExpandProperty Name
+foreach ($pc in $computers) {
+  Invoke-Command -ComputerName $pc -ScriptBlock {
+    Get-Volume | Where {$_.DriveLetter -ne $null} | Select @{N="Server";E={$env:COMPUTERNAME}}, DriveLetter, @{N="FreeGB";E={[math]::Round($_.SizeRemaining/1GB,1)}}, @{N="TotGB";E={[math]::Round($_.Size/1GB,1)}}
+  }
+}</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header linux"><span class="dot"></span> Linux — Monitor Rapido</div>
+        <pre><span class="cmt"># CPU + memoria + disco in una volta</span>
+<span class="cmd">echo "=== CPU ===" && top -bn1 | grep "Cpu(s)"</span>
+<span class="cmd">echo "=== RAM ===" && free -h</span>
+<span class="cmd">echo "=== DISK ===" && df -h --output=source,used,avail,pcent,target | grep -v tmpfs</span>
+
+<span class="cmt"># Servizi failed (systemd)</span>
+<span class="cmd">systemctl --failed</span>
+
+<span class="cmt"># Monitoring in tempo reale</span>
+<span class="cmd">watch -n 5 'df -h && echo && free -h && echo && uptime'</span>
+
+<span class="cmt"># Login SSH delle ultime ore</span>
+<span class="cmd">last | head -20</span>
+<span class="cmd">lastlog | grep -v "Never"</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 13. SICUREZZA -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section" id="sicurezza">
+    <div class="section-label">Capitolo 13</div>
+    <h2>Sicurezza IT — Hardening e Incidenti</h2>
+    <p>La sicurezza è trasversale a tutti i livelli. Il 1° livello la applica seguendo le procedure, il 2° livello la
+      configura e gestisce gli incidenti, il 3° livello la progetta.</p>
+
+    <h3>Hardening Windows Server</h3>
+    <div class="single-code">
+      <div class="code-header win"><span class="dot"></span> PowerShell — Hardening Base</div>
+      <pre><span class="cmt"># Disabilita protocolli obsoleti (SMBv1 — WannaCry)</span>
+<span class="cmd">Disable-WindowsOptionalFeature -Online -FeatureName smb1protocol</span>
+<span class="cmd">Set-SmbServerConfiguration -EnableSMB1Protocol $false -Force</span>
+
+<span class="cmt"># Abilita Windows Firewall su tutti i profili</span>
+<span class="cmd">Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True</span>
+
+<span class="cmt"># Disabilita servizi non necessari</span>
+<span class="cmd">$unnecessary = @("XblGameSave","XblAuthManager","XboxGipSvc","Fax","WMPNetworkSvc")
+foreach ($svc in $unnecessary) { Set-Service -Name $svc -StartupType Disabled -ErrorAction SilentlyContinue }</span>
+
+<span class="cmt"># Abilita auditing sicurezza</span>
+<span class="cmd">auditpol /set /subcategory:"Logon" /success:enable /failure:enable</span>
+<span class="cmd">auditpol /set /subcategory:"Account Logon" /success:enable /failure:enable</span>
+<span class="cmd">auditpol /set /subcategory:"Privilege Use" /success:enable /failure:enable</span>
+
+<span class="cmt"># Verifica aggiornamenti mancanti</span>
+<span class="cmd">Get-WindowsUpdate -NotInstalled | Where {$_.MsrcSeverity -eq "Critical"}</span>
+
+<span class="cmt"># Policy password forte (via GPO è meglio, ma in emergenza)</span>
+<span class="cmd">net accounts /minpwlen:12 /maxpwage:90 /lockoutthreshold:5 /lockoutduration:15</span></pre>
+    </div>
+
+    <h3>Hardening Linux</h3>
+    <div class="single-code">
+      <div class="code-header linux"><span class="dot"></span> Linux — Hardening Base</div>
+      <pre><span class="cmt"># Installa e configura fail2ban</span>
+<span class="cmd">apt install fail2ban -y</span>
+<span class="cmd">cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local</span>
+<span class="cmt"># Aggiungi in jail.local:</span>
+<span class="val">[sshd]
+enabled = true
+maxretry = 3
+bantime = 3600
+findtime = 600</span>
+<span class="cmd">systemctl enable --now fail2ban</span>
+
+<span class="cmt"># Abilita firewall UFW (Ubuntu)</span>
+<span class="cmd">ufw default deny incoming</span>
+<span class="cmd">ufw default allow outgoing</span>
+<span class="cmd">ufw allow from 10.0.0.0/8 to any port 22   <span class="cmt"># SSH solo da rete interna</span></span>
+<span class="cmd">ufw allow 80/tcp</span>
+<span class="cmd">ufw allow 443/tcp</span>
+<span class="cmd">ufw enable</span>
+<span class="cmd">ufw status verbose</span>
+
+<span class="cmt"># Firewalld (RHEL/Rocky)</span>
+<span class="cmd">firewall-cmd --permanent --remove-service=ssh</span>
+<span class="cmd">firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="10.0.0.0/8" service name="ssh" accept'</span>
+<span class="cmd">firewall-cmd --reload</span>
+
+<span class="cmt"># Aggiornamenti automatici di sicurezza</span>
+<span class="cmd">apt install unattended-upgrades -y</span>
+<span class="cmd">dpkg-reconfigure -plow unattended-upgrades</span>
+
+<span class="cmt"># Controlla processi in ascolto (superfice di attacco)</span>
+<span class="cmd">ss -tulnp</span>
+<span class="cmd">netstat -tulnp</span>
+
+<span class="cmt"># Verifica SUID/SGID sospetti</span>
+<span class="cmd">find / -perm /4000 -type f 2>/dev/null</span></pre>
+    </div>
+
+    <h3>Risposta a un Incidente di Sicurezza</h3>
+    <ol class="steps">
+      <li><span class="step-num">1</span>
+        <p><strong>Contenimento immediato:</strong> Isola il sistema dalla rete (disconnetti dal vSwitch VMware, blocca
+          nel firewall, spegni se necessario). Impedisci la propagazione laterale.</p>
+      </li>
+      <li><span class="step-num">2</span>
+        <p><strong>Raccolta evidenze:</strong> Prima di spegnere, acquisisci: memoria RAM (dump), log di sistema,
+          connessioni di rete attive, processi in esecuzione. Le evidenze volatili spariscono allo spegnimento.</p>
+      </li>
+      <li><span class="step-num">3</span>
+        <p><strong>Analisi:</strong> Identifica il vettore di attacco (phishing, vuln, credenziali rubate), l'impatto
+          (dati esfiltrati? ransomware? lateral movement?) e il periodo di compromissione.</p>
+      </li>
+      <li><span class="step-num">4</span>
+        <p><strong>Eradicazione:</strong> Rimuovi malware, chiudi vettori di accesso, reset credenziali compromesse,
+          patching vulnerabilità sfruttate.</p>
+      </li>
+      <li><span class="step-num">5</span>
+        <p><strong>Ripristino:</strong> Restore da backup pulito (pre-compromissione), verifica integrità sistemi,
+          ripristino graduale dei servizi con monitoraggio intensificato.</p>
+      </li>
+      <li><span class="step-num">6</span>
+        <p><strong>Post-mortem:</strong> Documenta l'incidente, le azioni intraprese, i tempi di risposta. Identifica
+          miglioramenti al processo e alle difese. Aggiorna playbook.</p>
+      </li>
+    </ol>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 14. 3° LIVELLO -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="section" id="livello3">
+    <div class="section-label">Capitolo 14 — Focus Avanzato</div>
+    <h2>Il 3° Livello — Architetto IT</h2>
+    <p>Il sistemista di 3° livello è un architetto con expertise profonda. Progetta soluzioni, gestisce vendor,
+      definisce standard e guida tecnicamente team interi. Di seguito una panoramica delle sue aree di specializzazione.
+    </p>
+
+    <h3>🗺 Dominio del 3° Livello</h3>
+    <div class="card-grid">
+      <div class="card" style="border-color:rgba(255,107,53,0.3)">
+        <div class="card-icon">☁</div>
+        <h4 style="color:var(--accent3)">Cloud Architecture</h4>
+        <p>Progetta infrastrutture ibride su Azure/AWS/GCP. Landing Zone, hub-spoke networking, ExpressRoute/Direct
+          Connect, policy-as-code con Azure Policy e Terraform.</p>
+      </div>
+      <div class="card" style="border-color:rgba(255,107,53,0.3)">
+        <div class="card-icon">🔐</div>
+        <h4 style="color:var(--accent3)">Zero Trust & Security Architecture</h4>
+        <p>Implementa Zero Trust con Identity-first approach. SIEM (Sentinel, Splunk), SOAR, EDR management, PKI
+          interna, gestione certificati, PAM (Privileged Access Management).</p>
+      </div>
+      <div class="card" style="border-color:rgba(255,107,53,0.3)">
+        <div class="card-icon">🔄</div>
+        <h4 style="color:var(--accent3)">Infrastructure as Code</h4>
+        <p>Automation con Terraform, Ansible, Bicep/ARM, Puppet. Pipeline CI/CD per infrastruttura (GitOps).
+          Configuration drift detection. Tutto documentato e versionato in Git.</p>
+      </div>
+      <div class="card" style="border-color:rgba(255,107,53,0.3)">
+        <div class="card-icon">🏗</div>
+        <h4 style="color:var(--accent3)">Disaster Recovery Design</h4>
+        <p>Definisce RPO/RTO per ogni sistema critico. Progetta architetture active-active e active-passive. Gestisce
+          test DR periodici, documenta runbook di failover e failback.</p>
+      </div>
+      <div class="card" style="border-color:rgba(255,107,53,0.3)">
+        <div class="card-icon">📐</div>
+        <h4 style="color:var(--accent3)">Enterprise Storage & HCI</h4>
+        <p>Progetta e gestisce storage enterprise (NetApp, EMC, Pure Storage), vSAN, Ceph. Pianifica capacità a lungo
+          termine, tuning performance I/O, tiering storage.</p>
+      </div>
+      <div class="card" style="border-color:rgba(255,107,53,0.3)">
+        <div class="card-icon">🤖</div>
+        <h4 style="color:var(--accent3)">Automazione & DevOps</h4>
+        <p>Porta le pratiche DevOps nell'infrastruttura. Monitoring as Code, self-healing infrastructure, auto-scaling,
+          integrazione con ticketing e CMDB via API.</p>
+      </div>
+    </div>
+
+    <h3>Esempio: Infrastructure as Code con Terraform</h3>
+    <div class="single-code">
+      <div class="code-header both"><span class="dot"></span> Terraform — Deploy VM su Azure (esempio 3° livello)</div>
+      <pre><span class="cmt"># main.tf — crea VM Windows Server su Azure</span>
+<span class="kw">resource</span> <span class="str">"azurerm_virtual_machine"</span> <span class="str">"server01"</span> {
+  name                  = <span class="val">"server01-prod"</span>
+  resource_group_name   = azurerm_resource_group.main.name
+  location              = <span class="val">"West Europe"</span>
+  vm_size               = <span class="val">"Standard_D4s_v3"</span>
+
+  storage_image_reference {
+    publisher = <span class="val">"MicrosoftWindowsServer"</span>
+    offer     = <span class="val">"WindowsServer"</span>
+    sku       = <span class="val">"2022-Datacenter"</span>
+    version   = <span class="val">"latest"</span>
+  }
+
+  os_profile {
+    computer_name  = <span class="val">"server01"</span>
+    admin_username = var.admin_username
+    admin_password = var.admin_password  <span class="cmt"># da Key Vault!</span>
+  }
+}
+
+<span class="cmt"># Applica con:</span>
+<span class="cmd">terraform init</span>
+<span class="cmd">terraform plan</span>       <span class="cmt"># preview modifiche</span>
+<span class="cmd">terraform apply</span>      <span class="cmt"># esegui</span>
+<span class="cmd">terraform destroy</span>    <span class="cmt"># elimina tutto</span></pre>
+    </div>
+
+    <h3>Ansible — Configuration Management</h3>
+    <div class="single-code">
+      <div class="code-header linux"><span class="dot"></span> Ansible — Playbook per hardening server Linux</div>
+      <pre><span class="cmt"># hardening.yml</span>
+<span class="val">---
+- name: Hardening base server Linux
+  hosts: all_servers
+  become: yes
+
+  tasks:
+    - name: Aggiorna tutti i pacchetti
+      apt:
+        upgrade: dist
+        update_cache: yes
+
+    - name: Installa fail2ban
+      apt:
+        name: fail2ban
+        state: present
+
+    - name: Configura SSH hardening
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      loop:
+        - { regexp: '^PermitRootLogin', line: 'PermitRootLogin no' }
+        - { regexp: '^PasswordAuthentication', line: 'PasswordAuthentication no' }
+        - { regexp: '^Port', line: 'Port 2222' }
+      notify: reload sshd
+
+  handlers:
+    - name: reload sshd
+      service:
+        name: sshd
+        state: reloaded</span>
+
+<span class="cmt"># Esegui playbook su tutti i server</span>
+<span class="cmd">ansible-playbook -i inventory.yml hardening.yml --check</span>  <span class="cmt"># dry run</span>
+<span class="cmd">ansible-playbook -i inventory.yml hardening.yml</span></pre>
+    </div>
+
+    <h3>KPI e Metriche del 3° Livello</h3>
+    <table class="proc-table">
+      <tr>
+        <th>Metrica</th>
+        <th>Target Tipico</th>
+        <th>Come si misura</th>
+      </tr>
+      <tr>
+        <td>RTO (Recovery Time Objective)</td>
+        <td>&lt; 4 ore per sistemi critici</td>
+        <td>Test DR periodici</td>
+      </tr>
+      <tr>
+        <td>RPO (Recovery Point Objective)</td>
+        <td>&lt; 1 ora per dati critici</td>
+        <td>Frequenza backup/replica</td>
+      </tr>
+      <tr>
+        <td>Uptime infrastruttura</td>
+        <td>99.9% (8.7h/anno downtime)</td>
+        <td>PRTG/Zabbix SLA report</td>
+      </tr>
+      <tr>
+        <td>Patch coverage</td>
+        <td>100% critical in 72h</td>
+        <td>WSUS / SCCM / Intune report</td>
+      </tr>
+      <tr>
+        <td>MTTR (Mean Time To Resolve)</td>
+        <td>&lt; 2 ore per P1</td>
+        <td>Ticket system (ServiceNow, Jira)</td>
+      </tr>
+      <tr>
+        <td>Configuration drift</td>
+        <td>0% su sistemi prod</td>
+        <td>Ansible/Terraform state check</td>
+      </tr>
+    </table>
+
+    <div class="alert alert-tip">
+      <strong>💡 Il Percorso verso il 3° Livello</strong>
+      Per crescere da 2° a 3° livello: ottieni certificazioni (AZ-104 Azure Administrator, VCP-DCV VMware, RHCSA/RHCE
+      Linux, CCNP Networking). Approfondisci scripting (PowerShell avanzato, Python, Bash). Studia IaC (Terraform,
+      Ansible). Lavora su un progetto di migrazione cloud o disaster recovery completo. La differenza principale è la
+      capacità di progettare soluzioni, non solo implementarle.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- GLOSSARIO -->
+  <div class="section">
+    <div class="section-label">Appendice</div>
+    <h2>Glossario Essenziale del Sistemista</h2>
+    <table class="proc-table">
+      <tr>
+        <th>Acronimo</th>
+        <th>Significato</th>
+        <th>Descrizione</th>
+      </tr>
+      <tr>
+        <td>AD</td>
+        <td>Active Directory</td>
+        <td>Servizio di directory Microsoft per gestione identità</td>
+      </tr>
+      <tr>
+        <td>DC</td>
+        <td>Domain Controller</td>
+        <td>Server con ruolo AD DS</td>
+      </tr>
+      <tr>
+        <td>GPO</td>
+        <td>Group Policy Object</td>
+        <td>Policy di configurazione per utenti/computer del dominio</td>
+      </tr>
+      <tr>
+        <td>DHCP</td>
+        <td>Dynamic Host Configuration Protocol</td>
+        <td>Assegna IP automaticamente ai client</td>
+      </tr>
+      <tr>
+        <td>DNS</td>
+        <td>Domain Name System</td>
+        <td>Risolve nomi in indirizzi IP</td>
+      </tr>
+      <tr>
+        <td>RDP</td>
+        <td>Remote Desktop Protocol</td>
+        <td>Protocollo Microsoft per accesso grafico remoto</td>
+      </tr>
+      <tr>
+        <td>SSH</td>
+        <td>Secure Shell</td>
+        <td>Protocollo per accesso remoto sicuro da terminale</td>
+      </tr>
+      <tr>
+        <td>VLAN</td>
+        <td>Virtual Local Area Network</td>
+        <td>Segmentazione logica della rete</td>
+      </tr>
+      <tr>
+        <td>SLA</td>
+        <td>Service Level Agreement</td>
+        <td>Accordo sui livelli di servizio (uptime, tempi risposta)</td>
+      </tr>
+      <tr>
+        <td>HA</td>
+        <td>High Availability</td>
+        <td>Alta disponibilità, ridondanza per minimizzare downtime</td>
+      </tr>
+      <tr>
+        <td>RPO/RTO</td>
+        <td>Recovery Point/Time Objective</td>
+        <td>Obiettivi di ripristino per disaster recovery</td>
+      </tr>
+      <tr>
+        <td>SNMP</td>
+        <td>Simple Network Management Protocol</td>
+        <td>Monitoraggio apparati di rete</td>
+      </tr>
+      <tr>
+        <td>NAT</td>
+        <td>Network Address Translation</td>
+        <td>Traduzione indirizzi IP privati/pubblici</td>
+      </tr>
+      <tr>
+        <td>MFA</td>
+        <td>Multi-Factor Authentication</td>
+        <td>Autenticazione a più fattori</td>
+      </tr>
+      <tr>
+        <td>IAM</td>
+        <td>Identity & Access Management</td>
+        <td>Gestione identità e accessi</td>
+      </tr>
+      <tr>
+        <td>PAM</td>
+        <td>Privileged Access Management</td>
+        <td>Gestione accessi privilegiati</td>
+      </tr>
+      <tr>
+        <td>VSS</td>
+        <td>Volume Shadow Copy Service</td>
+        <td>Snapshot di volume Windows</td>
+      </tr>
+      <tr>
+        <td>IaC</td>
+        <td>Infrastructure as Code</td>
+        <td>Infrastruttura gestita tramite codice (Terraform, Ansible)</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div style="font-size:1.5rem; margin-bottom:1rem">⚙️</div>
+    <div style="font-weight:700; color:var(--text); margin-bottom:0.5rem">Guida Completa del Sistemista IT</div>
+    <div style="color:var(--text2)">1° Livello · 2° Livello · 3° Livello</div>
+    <div style="margin-top:1.5rem; color:var(--text2); font-size:0.8rem">
+      Comandi verificati su Windows Server 2019/2022, Ubuntu 22.04/24.04, Rocky Linux 9, VMware ESXi 8.x<br>
+      Microsoft 365 · Azure AD / Entra ID · PowerShell 7+ · OpenSSH
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scroll per i link nav
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // Highlight nav attiva durante scroll
+    const sections = document.querySelectorAll('[id]');
+    const navLinks = document.querySelectorAll('nav a');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === '#' + entry.target.id
+              ? 'var(--accent)' : '';
+          });
+        }
+      });
+    }, { rootMargin: '-30% 0px -65% 0px' });
+    sections.forEach(s => observer.observe(s));
+  </script>
+</body>
+
+</html>
