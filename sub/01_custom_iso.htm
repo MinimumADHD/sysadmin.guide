@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guida: Windows ISO Custom con VMware</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e29;
+    --border: #252b3b;
+    --accent: #00d4ff;
+    --accent2: #7c5cfc;
+    --accent3: #ff6b35;
+    --warn: #ffd166;
+    --success: #06d6a0;
+    --danger: #ef476f;
+    --text: #e2e8f0;
+    --text-muted: #8892a4;
+    --text-dim: #4a5568;
+    --code-bg: #0a0c12;
+    --code-border: #1e2435;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+
+  /* Sfondo animato */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 10%, rgba(0, 212, 255, 0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 80% 90%, rgba(124, 92, 252, 0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 270px;
+    height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-track { background: transparent; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    z-index: 1;
+  }
+
+  .sidebar-logo .badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+  }
+
+  .sidebar-logo h1 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .sidebar-logo span {
+    color: var(--accent);
+  }
+
+  nav { padding: 16px 0; flex: 1; }
+
+  .nav-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    padding: 10px 24px 6px;
+    text-transform: uppercase;
+  }
+
+  nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 24px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    line-height: 1.3;
+  }
+
+  nav a:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
+    border-left-color: var(--accent);
+  }
+
+  nav a .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    min-width: 20px;
+  }
+
+  /* ── MAIN ── */
+  #main {
+    margin-left: 270px;
+    padding: 60px 60px 100px;
+    max-width: 960px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 0 0 60px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 70px;
+  }
+
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero p {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 580px;
+    line-height: 1.8;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  .meta-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .meta-chip .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .meta-chip .dot.orange { background: var(--accent3); }
+  .meta-chip .dot.purple { background: var(--accent2); }
+
+  /* ── SEZIONI ── */
+  .section {
+    margin-bottom: 80px;
+    scroll-margin-top: 30px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .step-badge {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(124,92,252,0.15));
+    border: 1px solid rgba(0,212,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-top: 4px;
+  }
+
+  .step-badge.orange {
+    background: linear-gradient(135deg, rgba(255,107,53,0.15), rgba(255,209,102,0.1));
+    border-color: rgba(255,107,53,0.3);
+    color: var(--accent3);
+  }
+
+  .step-badge.purple {
+    background: linear-gradient(135deg, rgba(124,92,252,0.15), rgba(0,212,255,0.1));
+    border-color: rgba(124,92,252,0.3);
+    color: var(--accent2);
+  }
+
+  .step-badge.green {
+    background: linear-gradient(135deg, rgba(6,214,160,0.15), rgba(0,212,255,0.1));
+    border-color: rgba(6,214,160,0.3);
+    color: var(--success);
+  }
+
+  .section-title-wrap h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+  }
+
+  .section-title-wrap .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .section p {
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.8;
+  }
+
+  .section h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 28px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section h3::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 16px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0 20px;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--code-border);
+  }
+
+  .code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .code-dots {
+    display: flex;
+    gap: 5px;
+  }
+
+  .code-dots span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .code-block pre {
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #c9d1d9;
+  }
+
+  .code-block pre::-webkit-scrollbar { height: 4px; }
+  .code-block pre::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .k { color: #ff79c6; }   /* keyword */
+  .s { color: #f1fa8c; }   /* string */
+  .c { color: #6272a4; font-style: italic; }   /* comment */
+  .v { color: #bd93f9; }   /* variable */
+  .f { color: #50fa7b; }   /* function/command */
+  .n { color: #8be9fd; }   /* flag/option */
+  .o { color: var(--accent3); }   /* operator/path */
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+
+  .callout-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .callout-content strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .callout.info {
+    background: rgba(0,212,255,0.07);
+    border: 1px solid rgba(0,212,255,0.2);
+    color: #a8d8ea;
+  }
+
+  .callout.warn {
+    background: rgba(255,209,102,0.07);
+    border: 1px solid rgba(255,209,102,0.25);
+    color: #f0d080;
+  }
+
+  .callout.danger {
+    background: rgba(239,71,111,0.07);
+    border: 1px solid rgba(239,71,111,0.25);
+    color: #f08090;
+  }
+
+  .callout.success {
+    background: rgba(6,214,160,0.07);
+    border: 1px solid rgba(6,214,160,0.25);
+    color: #80e8c8;
+  }
+
+  /* ── STEPS LIST ── */
+  .steps-list {
+    counter-reset: steps;
+    list-style: none;
+    margin: 0 0 20px;
+  }
+
+  .steps-list li {
+    counter-increment: steps;
+    display: flex;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    align-items: flex-start;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  .steps-list li:last-child { border-bottom: none; }
+
+  .steps-list li::before {
+    content: counter(steps);
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-top: 1px;
+  }
+
+  /* ── TABLE ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 16px 0 24px;
+  }
+
+  .data-table th {
+    background: var(--surface2);
+    color: var(--text);
+    font-weight: 700;
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .data-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text-muted);
+    vertical-align: top;
+  }
+
+  .data-table tr:hover td {
+    background: rgba(255,255,255,0.02);
+  }
+
+  .data-table td code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: var(--accent);
+  }
+
+  /* ── TAG ── */
+  .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .tag.cmd { background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid rgba(0,212,255,0.2); }
+  .tag.ps { background: rgba(124,92,252,0.1); color: var(--accent2); border: 1px solid rgba(124,92,252,0.2); }
+  .tag.tool { background: rgba(6,214,160,0.1); color: var(--success); border: 1px solid rgba(6,214,160,0.2); }
+  .tag.warn { background: rgba(255,209,102,0.1); color: var(--warn); border: 1px solid rgba(255,209,102,0.2); }
+
+  /* ── CARD GRID ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: rgba(0,212,255,0.3); }
+
+  .card-icon { font-size: 22px; margin-bottom: 10px; }
+
+  .card h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .card p {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ── INLINE CODE ── */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 40px 0;
+  }
+
+  /* ── INLINE HIGHLIGHT ── */
+  strong { color: var(--text); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    #sidebar { display: none; }
+    #main { margin-left: 0; padding: 30px 24px 80px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div class="sidebar-logo">
+    <div class="badge">TECH GUIDE v1.0</div>
+    <h1>Windows<br><span>ISO Custom</span><br>con VMware</h1>
+  </div>
+  <nav>
+    <div class="nav-section-label">Introduzione</div>
+    <a href="#intro"><span class="step-num">00</span> Panoramica & Strumenti</a>
+    <a href="#vm-setup"><span class="step-num">01</span> Setup VM VMware</a>
+
+    <div class="nav-section-label">Customizzazione OS</div>
+    <a href="#users"><span class="step-num">02</span> Utenti & Profili</a>
+    <a href="#folders"><span class="step-num">03</span> Cartelle Default</a>
+    <a href="#sw-install"><span class="step-num">04</span> Preinstallazione SW</a>
+    <a href="#sw-remove"><span class="step-num">05</span> Rimozione SW (BCUninstaller)</a>
+    <a href="#registry"><span class="step-num">06</span> Registry & Policy</a>
+    <a href="#sysprep"><span class="step-num">07</span> Sysprep & Generalizzazione</a>
+
+    <div class="nav-section-label">Esportazione & Editing</div>
+    <a href="#iso-export"><span class="step-num">08</span> Esportazione ISO</a>
+    <a href="#ntlite"><span class="step-num">09</span> NTLite</a>
+    <a href="#dismtools"><span class="step-num">10</span> DISMTools</a>
+    <a href="#final"><span class="step-num">11</span> Checklist Finale</a>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">GUIDA COMPLETA · WINDOWS ISO CUSTOMIZZATA</div>
+    <h1>Deploy <em>Windows</em><br>su misura,<br>da zero.</h1>
+    <p>Crea immagini ISO di Windows completamente personalizzate: utenti preconfigurati, cartelle strutturate, software preinstallato, bloatware rimosso e ottimizzazioni di sistema, tutto partendo da una macchina virtuale VMware Workstation.</p>
+    <div class="hero-meta">
+      <div class="meta-chip"><span class="dot"></span> VMware Workstation Pro/Player</div>
+      <div class="meta-chip"><span class="dot orange"></span> Windows 10 / 11</div>
+      <div class="meta-chip"><span class="dot purple"></span> NTLite · DISMTools · BCUninstaller</div>
+    </div>
+  </section>
+
+  <!-- 00 · INTRO -->
+  <section class="section" id="intro">
+    <div class="section-header">
+      <div class="step-badge">00</div>
+      <div class="section-title-wrap">
+        <h2>Panoramica & Strumenti Necessari</h2>
+        <div class="subtitle">Tutto ciò che serve prima di iniziare</div>
+      </div>
+    </div>
+
+    <p>Creare una ISO Windows custom significa preparare un'immagine di sistema che, una volta distribuita, presenta già un ambiente configurato e pronto all'uso. Questo processo si articola in tre macro-fasi: <strong>preparazione in VM</strong>, <strong>generalizzazione con Sysprep</strong> e <strong>post-processing dell'immagine</strong>.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🖥️</div>
+        <h4>VMware Workstation</h4>
+        <p>Ambiente di lavoro isolato per installare e configurare Windows senza toccare il sistema host. Versione 16+ consigliata.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🗑️</div>
+        <h4>BCUninstaller (Bulk Crap)</h4>
+        <p>Disinstallatore di massa per rimuovere bloatware, app UWP e residui di registro in modo chirurgico.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">✂️</div>
+        <h4>NTLite</h4>
+        <p>Editor avanzato per immagini WIM/ESD. Permette di rimuovere componenti, integrare driver e aggiornamenti.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔧</div>
+        <h4>DISMTools</h4>
+        <p>GUI per DISM. Gestione montaggio immagini, integrazione patch, conversione ESD↔WIM.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📦</div>
+        <h4>Sysprep</h4>
+        <p>Tool Microsoft integrato in Windows per generalizzare l'immagine e renderla pronta per la distribuzione.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💿</div>
+        <h4>oscdimg / AnyBurn</h4>
+        <p>Tool per creare l'ISO finale avviabile da un disco montato o da una cartella di files estratti.</p>
+      </div>
+    </div>
+
+    <h3>ISO Windows originale</h3>
+    <p>Scarica sempre da fonti ufficiali. Usa lo <strong>strumento di creazione multimediale Microsoft</strong> oppure scarica direttamente tramite PowerShell con il modulo <code>Get-WindowsImage</code>, oppure da <strong>https://www.microsoft.com/software-download/windows11</strong>.</p>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-content">
+        <strong>Importante: Licenze</strong>
+        Assicurati di avere le licenze adeguate per distribuire Windows customizzato. Le OEM license e le licenze Volume (KMS/MAK) hanno condizioni differenti. Non redistribuire immagini attivate senza autorizzazione.
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 · VM SETUP -->
+  <section class="section" id="vm-setup">
+    <div class="section-header">
+      <div class="step-badge">01</div>
+      <div class="section-title-wrap">
+        <h2>Setup Macchina Virtuale VMware</h2>
+        <div class="subtitle">Configurazione ottimale della VM di lavoro</div>
+      </div>
+    </div>
+
+    <p>La VM è il nostro "laboratorio". Deve essere abbastanza potente da eseguire installazioni software e abbastanza isolata da non contaminare il sistema host.</p>
+
+    <h3>Configurazione VM consigliata</h3>
+    <table class="data-table">
+      <thead><tr><th>Parametro</th><th>Valore Minimo</th><th>Valore Consigliato</th></tr></thead>
+      <tbody>
+        <tr><td>RAM</td><td>4 GB</td><td>8–16 GB</td></tr>
+        <tr><td>CPU Cores</td><td>2</td><td>4–8</td></tr>
+        <tr><td>Disco (OS)</td><td>60 GB</td><td>100–120 GB (thin provisioned)</td></tr>
+        <tr><td>Disco (Snapshot)</td><td>—</td><td>Secondo disco per snapshot intermedie</td></tr>
+        <tr><td>Rete</td><td>NAT</td><td><code>Host-only</code> (per isolamento)</td></tr>
+        <tr><td>Display</td><td>Accelerazione 3D off</td><td>Accelerazione 3D off</td></tr>
+        <tr><td>USB</td><td>USB 3.1</td><td>USB 3.1</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-content">
+        <strong>Strategia Snapshot</strong>
+        Crea uno snapshot dopo ogni fase critica: post-installazione OS pulita, post-installazione software, pre-sysprep. Questo ti permette di tornare indietro senza ricominciare da capo.
+      </div>
+    </div>
+
+    <h3>Installazione Windows nella VM</h3>
+    <ol class="steps-list">
+      <li>Crea una nuova VM in VMware → <em>Custom (Advanced)</em> → seleziona hardware compatibility dell'ultima versione disponibile.</li>
+      <li>Monta la ISO Windows originale come CD/DVD drive della VM.</li>
+      <li>Avvia la VM e procedi con l'installazione standard. Scegli <strong>Installazione personalizzata</strong> (non aggiornamento).</li>
+      <li>Durante la configurazione OOBE, <strong>non connettere a Internet</strong> (premi <code>Shift+F10</code> e digita <code>oobe\bypassnro</code> per aggirare l'obbligo di account Microsoft su Windows 11).</li>
+      <li>Crea un account locale temporaneo (es. <code>Administrator</code> o <code>SetupAdmin</code>). Questo account verrà rimosso o generalizzato con Sysprep.</li>
+      <li>Installa i <strong>VMware Tools</strong> immediatamente dopo il primo avvio.</li>
+      <li><strong>Snapshot #1</strong>: "OS pulito - pre configurazione".</li>
+    </ol>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">CMD · Bypass OOBE Account Microsoft (Win11)</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c"># Premi Shift+F10 durante la schermata di rete OOBE</span>
+<span class="f">oobe\bypassnro</span>
+
+<span class="c"># Il sistema si riavvia e permette "Non ho Internet"</span></pre>
+    </div>
+  </section>
+
+  <!-- 02 · USERS -->
+  <section class="section" id="users">
+    <div class="section-header">
+      <div class="step-badge orange">02</div>
+      <div class="section-title-wrap">
+        <h2>Creazione Utenti e Profili</h2>
+        <div class="subtitle">Utenti locali, gruppi e configurazione profili predefiniti</div>
+      </div>
+    </div>
+
+    <p>Esistono due approcci per creare utenti custom: <strong>manualmente tramite GUI/CMD/PS</strong> nella VM, oppure tramite un file <strong>Unattend.xml</strong> che configura tutto durante la fase di Sysprep/OOBE. Il secondo approccio è quello professionale.</p>
+
+    <h3>Metodo 1 — PowerShell (Diretto nella VM)</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">POWERSHELL</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c"># Crea un nuovo utente locale</span>
+<span class="v">$Password</span> = <span class="f">ConvertTo-SecureString</span> <span class="s">"P@ssw0rd2024!"</span> <span class="n">-AsPlainText</span> <span class="n">-Force</span>
+<span class="f">New-LocalUser</span> <span class="n">-Name</span> <span class="s">"Utente.Standard"</span> `
+              <span class="n">-Password</span> <span class="v">$Password</span> `
+              <span class="n">-FullName</span> <span class="s">"Utente Standard"</span> `
+              <span class="n">-Description</span> <span class="s">"Account utente predefinito azienda"</span> `
+              <span class="n">-PasswordNeverExpires</span>
+
+<span class="c"># Aggiunge l'utente al gruppo Users (non admin)</span>
+<span class="f">Add-LocalGroupMember</span> <span class="n">-Group</span> <span class="s">"Users"</span> <span class="n">-Member</span> <span class="s">"Utente.Standard"</span>
+
+<span class="c"># Crea un utente Admin separato</span>
+<span class="v">$AdminPass</span> = <span class="f">ConvertTo-SecureString</span> <span class="s">"Adm1n@Secure!"</span> <span class="n">-AsPlainText</span> <span class="n">-Force</span>
+<span class="f">New-LocalUser</span> <span class="n">-Name</span> <span class="s">"LocalAdmin"</span> `
+              <span class="n">-Password</span> <span class="v">$AdminPass</span> `
+              <span class="n">-FullName</span> <span class="s">"Local Administrator"</span> `
+              <span class="n">-PasswordNeverExpires</span>
+<span class="f">Add-LocalGroupMember</span> <span class="n">-Group</span> <span class="s">"Administrators"</span> <span class="n">-Member</span> <span class="s">"LocalAdmin"</span>
+
+<span class="c"># Disabilita l'account Administrator built-in (sicurezza)</span>
+<span class="f">Disable-LocalUser</span> <span class="n">-Name</span> <span class="s">"Administrator"</span>
+
+<span class="c"># Verifica utenti creati</span>
+<span class="f">Get-LocalUser</span> | <span class="f">Format-Table</span> Name, Enabled, PasswordLastSet</pre>
+    </div>
+
+    <h3>Metodo 2 — File Unattend.xml (Approccio professionale)</h3>
+    <p>Il file <code>unattend.xml</code> va posizionato in <code>C:\Windows\Panther\</code> prima di eseguire Sysprep. Viene letto automaticamente da Windows Setup durante le fasi <em>specialize</em> e <em>oobeSystem</em>.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">XML · Unattend.xml — Sezione Utenti</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="k">&lt;?xml</span> <span class="n">version=</span><span class="s">"1.0"</span> <span class="n">encoding=</span><span class="s">"utf-8"</span><span class="k">?&gt;</span>
+<span class="k">&lt;unattend</span> <span class="n">xmlns=</span><span class="s">"urn:schemas-microsoft-com:unattend"</span><span class="k">&gt;</span>
+
+  <span class="c">&lt;!-- FASE: oobeSystem - configurazione utente finale --&gt;</span>
+  <span class="k">&lt;settings</span> <span class="n">pass=</span><span class="s">"oobeSystem"</span><span class="k">&gt;</span>
+    <span class="k">&lt;component</span> <span class="n">name=</span><span class="s">"Microsoft-Windows-Shell-Setup"</span>
+               <span class="n">processorArchitecture=</span><span class="s">"amd64"</span>
+               <span class="n">publicKeyToken=</span><span class="s">"31bf3856ad364e35"</span>
+               <span class="n">language=</span><span class="s">"neutral"</span>
+               <span class="n">versionScope=</span><span class="s">"nonSxS"</span><span class="k">&gt;</span>
+
+      <span class="k">&lt;UserAccounts&gt;</span>
+        <span class="k">&lt;LocalAccounts&gt;</span>
+
+          <span class="c">&lt;!-- Utente standard --&gt;</span>
+          <span class="k">&lt;LocalAccount</span> <span class="n">wcm:action=</span><span class="s">"add"</span><span class="k">&gt;</span>
+            <span class="k">&lt;Password&gt;</span>
+              <span class="k">&lt;Value&gt;</span>UABAAHMAcwB3ADAByAGQAMgAwADIANAAhAFAAYQBzAHMAdwBvAHIAZAA=<span class="k">&lt;/Value&gt;</span>
+              <span class="k">&lt;PlainText&gt;</span>false<span class="k">&lt;/PlainText&gt;</span>
+            <span class="k">&lt;/Password&gt;</span>
+            <span class="k">&lt;DisplayName&gt;</span>Utente Aziendale<span class="k">&lt;/DisplayName&gt;</span>
+            <span class="k">&lt;Group&gt;</span>Users<span class="k">&lt;/Group&gt;</span>
+            <span class="k">&lt;Name&gt;</span>utente.azienda<span class="k">&lt;/Name&gt;</span>
+          <span class="k">&lt;/LocalAccount&gt;</span>
+
+          <span class="c">&lt;!-- Admin locale --&gt;</span>
+          <span class="k">&lt;LocalAccount</span> <span class="n">wcm:action=</span><span class="s">"add"</span><span class="k">&gt;</span>
+            <span class="k">&lt;Password&gt;</span>
+              <span class="k">&lt;Value&gt;</span>QQBkAG0AMQBuAEAAUwBlAGMAdQByAGUAIQBQAGEAcwBzAHcAbwByAGQA<span class="k">&lt;/Value&gt;</span>
+              <span class="k">&lt;PlainText&gt;</span>false<span class="k">&lt;/PlainText&gt;</span>
+            <span class="k">&lt;/Password&gt;</span>
+            <span class="k">&lt;DisplayName&gt;</span>Local Admin<span class="k">&lt;/DisplayName&gt;</span>
+            <span class="k">&lt;Group&gt;</span>Administrators<span class="k">&lt;/Group&gt;</span>
+            <span class="k">&lt;Name&gt;</span>LocalAdmin<span class="k">&lt;/Name&gt;</span>
+          <span class="k">&lt;/LocalAccount&gt;</span>
+
+        <span class="k">&lt;/LocalAccounts&gt;</span>
+      <span class="k">&lt;/UserAccounts&gt;</span>
+
+      <span class="c">&lt;!-- Salta la configurazione OOBE interattiva --&gt;</span>
+      <span class="k">&lt;OOBE&gt;</span>
+        <span class="k">&lt;HideEULAPage&gt;</span>true<span class="k">&lt;/HideEULAPage&gt;</span>
+        <span class="k">&lt;HideOEMRegistrationScreen&gt;</span>true<span class="k">&lt;/HideOEMRegistrationScreen&gt;</span>
+        <span class="k">&lt;HideOnlineAccountScreens&gt;</span>true<span class="k">&lt;/HideOnlineAccountScreens&gt;</span>
+        <span class="k">&lt;HideWirelessSetupInOOBE&gt;</span>true<span class="k">&lt;/HideWirelessSetupInOOBE&gt;</span>
+        <span class="k">&lt;SkipMachineOOBE&gt;</span>true<span class="k">&lt;/SkipMachineOOBE&gt;</span>
+        <span class="k">&lt;SkipUserOOBE&gt;</span>true<span class="k">&lt;/SkipUserOOBE&gt;</span>
+      <span class="k">&lt;/OOBE&gt;</span>
+
+      <span class="c">&lt;!-- Fuso orario e lingua --&gt;</span>
+      <span class="k">&lt;TimeZone&gt;</span>Romance Standard Time<span class="k">&lt;/TimeZone&gt;</span>
+
+    <span class="k">&lt;/component&gt;</span>
+  <span class="k">&lt;/settings&gt;</span>
+<span class="k">&lt;/unattend&gt;</span></pre>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-content">
+        <strong>Encoder per password Unattend</strong>
+        Le password nell'XML devono essere in Base64 con il suffisso "Password" codificato in UTF-16LE. Usa il comando PowerShell: <code>[Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes("TuaPassword" + "Password"))</code>
+      </div>
+    </div>
+
+    <h3>Copiare profilo Default User</h3>
+    <p>Per replicare le impostazioni di un profilo configurato manualmente su tutti i nuovi utenti, copia il profilo in <code>C:\Users\Default</code> tramite Sysprep con l'opzione <code>CopyProfile=true</code> nell'unattend.xml.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">XML · CopyProfile nel passaggio specialize</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="k">&lt;settings</span> <span class="n">pass=</span><span class="s">"specialize"</span><span class="k">&gt;</span>
+  <span class="k">&lt;component</span> <span class="n">name=</span><span class="s">"Microsoft-Windows-Shell-Setup"</span> ...<span class="k">&gt;</span>
+    <span class="k">&lt;CopyProfile&gt;</span>true<span class="k">&lt;/CopyProfile&gt;</span>
+    <span class="k">&lt;ComputerName&gt;</span>*<span class="k">&lt;/ComputerName&gt;</span> <span class="c">&lt;!-- * = nome casuale --&gt;</span>
+    <span class="k">&lt;RegisteredOrganization&gt;</span>La Mia Azienda<span class="k">&lt;/RegisteredOrganization&gt;</span>
+    <span class="k">&lt;RegisteredOwner&gt;</span>IT Department<span class="k">&lt;/RegisteredOwner&gt;</span>
+  <span class="k">&lt;/component&gt;</span>
+<span class="k">&lt;/settings&gt;</span></pre>
+    </div>
+  </section>
+
+  <!-- 03 · CARTELLE -->
+  <section class="section" id="folders">
+    <div class="section-header">
+      <div class="step-badge orange">03</div>
+      <div class="section-title-wrap">
+        <h2>Creazione Cartelle Default</h2>
+        <div class="subtitle">Struttura directory standardizzata per tutti gli utenti</div>
+      </div>
+    </div>
+
+    <p>Le cartelle vanno create nel profilo <strong>Default User</strong> (<code>C:\Users\Default\</code>) in modo che ogni nuovo utente le erediti automaticamente al primo accesso.</p>
+
+    <h3>Script PowerShell — Creazione struttura cartelle</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">POWERSHELL · Setup-DefaultFolders.ps1</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c"># ============================================
+# Setup Cartelle Profilo Default
+# Eseguire come SYSTEM o Administrator
+# ============================================</span>
+
+<span class="v">$DefaultProfile</span> = <span class="s">"C:\Users\Default"</span>
+
+<span class="c"># Struttura cartelle da creare</span>
+<span class="v">$Folders</span> = <span class="k">@</span>(
+    <span class="s">"Desktop\Strumenti IT"</span>,
+    <span class="s">"Desktop\Documenti Aziendali"</span>,
+    <span class="s">"Documents\Progetti"</span>,
+    <span class="s">"Documents\Modelli"</span>,
+    <span class="s">"Documents\Archivio"</span>,
+    <span class="s">"Downloads\Software"</span>,
+    <span class="s">"Pictures\Loghi Aziendali"</span>,
+    <span class="s">"AppData\Roaming\AziendaApp"</span>
+)
+
+<span class="k">foreach</span> (<span class="v">$folder</span> <span class="k">in</span> <span class="v">$Folders</span>) {
+    <span class="v">$FullPath</span> = <span class="f">Join-Path</span> <span class="v">$DefaultProfile</span> <span class="v">$folder</span>
+    <span class="k">if</span> (<span class="n">-not</span> (<span class="f">Test-Path</span> <span class="v">$FullPath</span>)) {
+        <span class="f">New-Item</span> <span class="n">-ItemType</span> Directory <span class="n">-Path</span> <span class="v">$FullPath</span> <span class="n">-Force</span> | <span class="f">Out-Null</span>
+        <span class="f">Write-Host</span> <span class="s">"[✓] Creata: $FullPath"</span> <span class="n">-ForegroundColor</span> Green
+    } <span class="k">else</span> {
+        <span class="f">Write-Host</span> <span class="s">"[~] Già esistente: $FullPath"</span> <span class="n">-ForegroundColor</span> Yellow
+    }
+}
+
+<span class="c"># Copia file template nelle cartelle (es. modelli Office)</span>
+<span class="v">$TemplatesSource</span> = <span class="s">"C:\Setup\Templates"</span>
+<span class="k">if</span> (<span class="f">Test-Path</span> <span class="v">$TemplatesSource</span>) {
+    <span class="f">Copy-Item</span> <span class="n">-Path</span> <span class="s">"$TemplatesSource\*"</span> `
+              <span class="n">-Destination</span> <span class="s">"$DefaultProfile\Documents\Modelli"</span> `
+              <span class="n">-Recurse</span> <span class="n">-Force</span>
+    <span class="f">Write-Host</span> <span class="s">"[✓] Template copiati"</span> <span class="n">-ForegroundColor</span> Green
+}
+
+<span class="c"># Imposta sfondo Desktop (da file nel profilo Default)</span>
+<span class="v">$WallpaperSrc</span> = <span class="s">"C:\Setup\wallpaper.jpg"</span>
+<span class="v">$WallpaperDst</span> = <span class="s">"C:\Windows\Web\Wallpaper\Company\wallpaper.jpg"</span>
+<span class="k">if</span> (<span class="f">Test-Path</span> <span class="v">$WallpaperSrc</span>) {
+    <span class="f">New-Item</span> <span class="n">-ItemType</span> Directory <span class="n">-Path</span> <span class="s">"C:\Windows\Web\Wallpaper\Company"</span> <span class="n">-Force</span> | <span class="f">Out-Null</span>
+    <span class="f">Copy-Item</span> <span class="v">$WallpaperSrc</span> <span class="v">$WallpaperDst</span> <span class="n">-Force</span>
+    <span class="f">Write-Host</span> <span class="s">"[✓] Wallpaper copiato"</span> <span class="n">-ForegroundColor</span> Green
+}
+
+<span class="f">Write-Host</span> <span class="s">"`n[DONE] Struttura cartelle completata."</span> <span class="n">-ForegroundColor</span> Cyan</pre>
+    </div>
+
+    <h3>Configurazione Registry per cartelle speciali</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">POWERSHELL · Reindirizza cartelle tramite Registry</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c"># Carica hive del profilo Default</span>
+<span class="f">reg</span> <span class="f">load</span> <span class="o">HKLM\DefaultUser</span> <span class="o">C:\Users\Default\NTUSER.DAT</span>
+
+<span class="c"># Imposta sfondo desktop per il profilo Default</span>
+<span class="f">Set-ItemProperty</span> <span class="n">-Path</span> <span class="s">"HKLM:\DefaultUser\Control Panel\Desktop"</span> `
+    <span class="n">-Name</span> <span class="s">"Wallpaper"</span> `
+    <span class="n">-Value</span> <span class="s">"C:\Windows\Web\Wallpaper\Company\wallpaper.jpg"</span>
+
+<span class="c"># Disabilita la schermata di blocco (opzionale)</span>
+<span class="f">Set-ItemProperty</span> <span class="n">-Path</span> <span class="s">"HKLM:\DefaultUser\Software\Policies\Microsoft\Windows\Personalization"</span> `
+    <span class="n">-Name</span> <span class="s">"NoLockScreen"</span> `
+    <span class="n">-Value</span> <span class="k">1</span> <span class="n">-Type</span> DWord <span class="n">-Force</span>
+
+<span class="c"># Scollega il profilo Default (OBBLIGATORIO dopo reg load)</span>
+<span class="f">reg</span> <span class="f">unload</span> <span class="o">HKLM\DefaultUser</span></pre>
+    </div>
+  </section>
+
+  <!-- 04 · SW INSTALL -->
+  <section class="section" id="sw-install">
+    <div class="section-header">
+      <div class="step-badge">04</div>
+      <div class="section-title-wrap">
+        <h2>Preinstallazione Software</h2>
+        <div class="subtitle">Installazione silenziosa e automatizzata di applicazioni</div>
+      </div>
+    </div>
+
+    <p>L'installazione del software deve essere <strong>silenziosa</strong> (senza interazione utente) per essere scriptabile. La maggior parte dei setup supporta parametri silent. L'approccio migliore è creare uno script master che esegue tutto in sequenza.</p>
+
+    <h3>Parametri silent comuni per installer</h3>
+    <table class="data-table">
+      <thead><tr><th>Tipo Installer</th><th>Parametri Silent</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>NSIS (.exe)</td><td><code>/S</code></td><td>Case-sensitive, maiuscolo</td></tr>
+        <tr><td>Inno Setup (.exe)</td><td><code>/SILENT</code> o <code>/VERYSILENT</code></td><td><code>/SUPPRESSMSGBOXES</code> per nessun popup</td></tr>
+        <tr><td>MSI</td><td><code>/quiet /norestart</code></td><td>Usare <code>msiexec /i setup.msi /quiet</code></td></tr>
+        <tr><td>InstallShield</td><td><code>/s /v"/qn"</code></td><td>Variabile secondo versione</td></tr>
+        <tr><td>7-Zip SFX</td><td><code>-y</code></td><td>Risponde "sì" a tutto</td></tr>
+        <tr><td>WinGet</td><td><code>--silent --accept-*</code></td><td>Metodo moderno consigliato</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Script master di installazione</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">POWERSHELL · Install-Software.ps1</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c"># ============================================
+# Master Script - Installazione Software
+# Posiziona questo script e i setup in C:\Setup\SW\
+# Eseguire come Administrator
+# ============================================</span>
+
+<span class="v">$LogFile</span> = <span class="s">"C:\Setup\install_log.txt"</span>
+<span class="v">$SWPath</span>  = <span class="s">"C:\Setup\SW"</span>
+
+<span class="k">function</span> <span class="f">Write-Log</span> { <span class="k">param</span>(<span class="v">$msg</span>) <span class="f">Add-Content</span> <span class="v">$LogFile</span> <span class="s">"[$(Get-Date -f 'HH:mm:ss')] $msg"</span> }
+<span class="k">function</span> <span class="f">Install-Silent</span> {
+    <span class="k">param</span>(<span class="v">$Name</span>, <span class="v">$Exe</span>, <span class="v">$Args</span>)
+    <span class="f">Write-Host</span> <span class="s">"  → Installando $Name..."</span> <span class="n">-NoNewline</span>
+    <span class="v">$proc</span> = <span class="f">Start-Process</span> <span class="n">-FilePath</span> <span class="v">$Exe</span> <span class="n">-ArgumentList</span> <span class="v">$Args</span> `
+                          <span class="n">-Wait</span> <span class="n">-PassThru</span> <span class="n">-WindowStyle</span> Hidden
+    <span class="k">if</span> (<span class="v">$proc</span>.ExitCode <span class="k">-eq</span> <span class="k">0</span>) {
+        <span class="f">Write-Host</span> <span class="s">" [OK]"</span> <span class="n">-ForegroundColor</span> Green
+        <span class="f">Write-Log</span> <span class="s">"[OK] $Name"</span>
+    } <span class="k">else</span> {
+        <span class="f">Write-Host</span> <span class="s">" [ERR: $($proc.ExitCode)]"</span> <span class="n">-ForegroundColor</span> Red
+        <span class="f">Write-Log</span> <span class="s">"[FAIL] $Name - ExitCode: $($proc.ExitCode)"</span>
+    }
+}
+
+<span class="f">Write-Host</span> <span class="s">"`n========== INSTALLAZIONE SOFTWARE =========="</span> <span class="n">-ForegroundColor</span> Cyan
+
+<span class="c"># ── Produttività ──────────────────────────────</span>
+<span class="f">Install-Silent</span> <span class="s">"7-Zip"</span>          <span class="s">"$SWPath\7z2301-x64.exe"</span>   <span class="s">"/S"</span>
+<span class="f">Install-Silent</span> <span class="s">"VLC Media Player"</span> <span class="s">"$SWPath\vlc-3.0.20.exe"</span> <span class="s">"/L=1040 /S"</span>
+<span class="f">Install-Silent</span> <span class="s">"Notepad++"</span>       <span class="s">"$SWPath\npp.8.5.7.exe"</span>   <span class="s">"/S"</span>
+<span class="f">Install-Silent</span> <span class="s">"Adobe Reader DC"</span>  <span class="s">"$SWPath\AcroRdr.exe"</span>     <span class="s">"/sAll /rs /msi EULA_ACCEPT=YES"</span>
+
+<span class="c"># ── Browser ───────────────────────────────────</span>
+<span class="f">Install-Silent</span> <span class="s">"Google Chrome"</span>   <span class="s">"$SWPath\ChromeSetup.exe"</span>  <span class="s">"/silent /install"</span>
+
+<span class="c"># ── Runtime & Framework ───────────────────────</span>
+<span class="f">Install-Silent</span> <span class="s">".NET 8 Runtime"</span>  <span class="s">"$SWPath\dotnet-8-x64.exe"</span> <span class="s">"/quiet /norestart"</span>
+<span class="f">Install-Silent</span> <span class="s">"VC++ 2022"</span>       <span class="s">"$SWPath\VC_redist.x64.exe"</span><span class="s">"/quiet /norestart"</span>
+
+<span class="c"># ── Tramite WinGet (se disponibile) ───────────</span>
+<span class="k">if</span> (<span class="f">Get-Command</span> winget <span class="n">-ErrorAction</span> SilentlyContinue) {
+    <span class="f">Write-Host</span> <span class="s">"`n[WinGet] Installazione pacchetti aggiuntivi..."</span>
+    <span class="k">$packages</span> = <span class="k">@</span>(
+        <span class="s">"Git.Git"</span>,
+        <span class="s">"Microsoft.WindowsTerminal"</span>,
+        <span class="s">"VideoLAN.VLC"</span>
+    )
+    <span class="k">foreach</span> (<span class="v">$pkg</span> <span class="k">in</span> <span class="k">$packages</span>) {
+        <span class="f">winget</span> install <span class="n">--id</span> <span class="v">$pkg</span> <span class="n">--silent</span> <span class="n">--accept-package-agreements</span> <span class="n">--accept-source-agreements</span>
+    }
+}
+
+<span class="c"># ── MSI tramite msiexec ───────────────────────</span>
+<span class="f">msiexec</span> <span class="n">/i</span> <span class="s">"$SWPath\app.msi"</span> <span class="n">/quiet</span> <span class="n">/norestart</span> <span class="n">/log</span> <span class="s">"C:\Setup\msi_log.txt"</span>
+
+<span class="f">Write-Host</span> <span class="s">"`n[DONE] Installazione completata. Log: $LogFile"</span> <span class="n">-ForegroundColor</span> Cyan</pre>
+    </div>
+
+    <div class="callout success">
+      <div class="callout-icon">✅</div>
+      <div class="callout-content">
+        <strong>Best Practice: Snapshot prima dell'installazione SW</strong>
+        Prima di eseguire lo script di installazione, crea uno <strong>Snapshot #2</strong> nella VM: "Pre-SW-Install". Se qualcosa va storto puoi ripristinare e riprovare senza reinstallare Windows.
+      </div>
+    </div>
+
+    <h3>Installazione silenziosa Office 365 / LTSC</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">XML · configuration.xml per Office Deployment Tool</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="k">&lt;Configuration</span> <span class="n">ID=</span><span class="s">"OfficeConfig"</span><span class="k">&gt;</span>
+  <span class="k">&lt;Add</span> <span class="n">OfficeClientEdition=</span><span class="s">"64"</span> <span class="n">Channel=</span><span class="s">"PerpetualVL2021"</span><span class="k">&gt;</span>
+    <span class="k">&lt;Product</span> <span class="n">ID=</span><span class="s">"ProPlus2021Volume"</span><span class="k">&gt;</span>
+      <span class="k">&lt;Language</span> <span class="n">ID=</span><span class="s">"it-it"</span><span class="k">/&gt;</span>
+      <span class="c">&lt;!-- Escludi componenti non necessari --&gt;</span>
+      <span class="k">&lt;ExcludeApp</span> <span class="n">ID=</span><span class="s">"Groove"</span><span class="k">/&gt;</span>  <span class="c">&lt;!-- OneDrive Music --&gt;</span>
+      <span class="k">&lt;ExcludeApp</span> <span class="n">ID=</span><span class="s">"Lync"</span><span class="k">/&gt;</span>    <span class="c">&lt;!-- Skype for Business --&gt;</span>
+    <span class="k">&lt;/Product&gt;</span>
+  <span class="k">&lt;/Add&gt;</span>
+  <span class="k">&lt;Property</span> <span class="n">Name=</span><span class="s">"AUTOACTIVATE"</span> <span class="n">Value=</span><span class="s">"0"</span><span class="k">/&gt;</span>
+  <span class="k">&lt;Display</span> <span class="n">Level=</span><span class="s">"None"</span> <span class="n">AcceptEULA=</span><span class="s">"TRUE"</span><span class="k">/&gt;</span>
+  <span class="k">&lt;Logging</span> <span class="n">Level=</span><span class="s">"Standard"</span> <span class="n">Path=</span><span class="s">"C:\Setup\OfficeInstall.log"</span><span class="k">/&gt;</span>
+<span class="k">&lt;/Configuration&gt;</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">CMD · Esecuzione Office Deployment Tool</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c">REM Scarica e installa con ODT</span>
+<span class="f">setup.exe</span> <span class="n">/download</span> configuration.xml
+<span class="f">setup.exe</span> <span class="n">/configure</span> configuration.xml</pre>
+    </div>
+  </section>
+
+  <!-- 05 · SW REMOVE -->
+  <section class="section" id="sw-remove">
+    <div class="section-header">
+      <div class="step-badge orange">05</div>
+      <div class="section-title-wrap">
+        <h2>Rimozione Software con BCUninstaller</h2>
+        <div class="subtitle">Eliminazione chirurgica di bloatware, app UWP e residui</div>
+      </div>
+    </div>
+
+    <p><strong>Bulk Crap Uninstaller (BCUninstaller)</strong> è lo strumento più efficace per rimuovere software da Windows in modo pulito: rileva app tradizionali, Store/UWP, Chocolatey packages e i relativi residui di registro.</p>
+
+    <h3>Configurazione BCUninstaller per uso in ISO</h3>
+    <ol class="steps-list">
+      <li>Scarica <strong>BCUninstaller Portable</strong> da <code>https://www.bcuninstaller.com</code> e copialo in <code>C:\Setup\Tools\BCU\</code>.</li>
+      <li>Avvia <code>BCUninstaller.exe</code> dalla cartella portable — non richiede installazione.</li>
+      <li>Vai su <strong>Options → Settings</strong> e abilita: "Show Microsoft updates", "Show protected components" e "Show Windows Store apps".</li>
+      <li>Attendi il caricamento completo dell'elenco (può richiedere 30–60 secondi).</li>
+      <li>Seleziona le app da rimuovere (vedi lista consigliata sotto).</li>
+      <li>Usa <strong>Tools → Create bulk uninstall task</strong> per creare un task riutilizzabile.</li>
+      <li>Durante la disinstallazione attiva: <strong>Quiet uninstall</strong> e <strong>Delete leftovers after uninstall</strong>.</li>
+    </ol>
+
+    <h3>Lista bloatware Windows 10/11 consigliata per rimozione</h3>
+    <table class="data-table">
+      <thead><tr><th>Applicazione</th><th>Tipo</th><th>Motivo rimozione</th></tr></thead>
+      <tbody>
+        <tr><td>Cortana</td><td><span class="tag ps">UWP</span></td><td>Raccolta dati, inutile in ambito aziendale</td></tr>
+        <tr><td>Xbox App / Xbox Game Bar</td><td><span class="tag ps">UWP</span></td><td>Gaming, non necessario</td></tr>
+        <tr><td>Microsoft Teams (Personal)</td><td><span class="tag ps">UWP</span></td><td>Versione consumer, confonde con Teams Work</td></tr>
+        <tr><td>Solitaire Collection</td><td><span class="tag ps">UWP</span></td><td>Gioco, inutile</td></tr>
+        <tr><td>3D Builder / Paint 3D</td><td><span class="tag ps">UWP</span></td><td>Raramente usato</td></tr>
+        <tr><td>OneNote (Store)</td><td><span class="tag ps">UWP</span></td><td>Se si usa versione desktop da Office</td></tr>
+        <tr><td>Mixed Reality Portal</td><td><span class="tag ps">UWP</span></td><td>VR non necessario</td></tr>
+        <tr><td>Feedback Hub</td><td><span class="tag ps">UWP</span></td><td>Telemetria verso Microsoft</td></tr>
+        <tr><td>Get Help / Tips</td><td><span class="tag ps">UWP</span></td><td>Inutile</td></tr>
+        <tr><td>Skype</td><td><span class="tag cmd">WIN32</span></td><td>Se non usato in azienda</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Rimozione App UWP tramite PowerShell (alternativa/complemento)</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">POWERSHELL · Remove-Bloatware.ps1</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c"># Lista app UWP da rimuovere (tutti gli utenti + provisioned)</span>
+<span class="v">$AppsToRemove</span> = <span class="k">@</span>(
+    <span class="s">"Microsoft.XboxApp"</span>,
+    <span class="s">"Microsoft.XboxGameOverlay"</span>,
+    <span class="s">"Microsoft.XboxGamingOverlay"</span>,
+    <span class="s">"Microsoft.XboxIdentityProvider"</span>,
+    <span class="s">"Microsoft.BingWeather"</span>,
+    <span class="s">"Microsoft.BingNews"</span>,
+    <span class="s">"Microsoft.BingSports"</span>,
+    <span class="s">"Microsoft.BingFinance"</span>,
+    <span class="s">"Microsoft.GetHelp"</span>,
+    <span class="s">"Microsoft.Getstarted"</span>,
+    <span class="s">"Microsoft.MicrosoftSolitaireCollection"</span>,
+    <span class="s">"Microsoft.MixedReality.Portal"</span>,
+    <span class="s">"Microsoft.3DBuilder"</span>,
+    <span class="s">"Microsoft.Paint3D"</span>,
+    <span class="s">"Microsoft.ZuneMusic"</span>,
+    <span class="s">"Microsoft.ZuneVideo"</span>,
+    <span class="s">"Microsoft.Teams"</span>,            <span class="c"># Teams Personal (Win11)</span>
+    <span class="s">"MicrosoftTeams"</span>,              <span class="c"># Variante nome</span>
+    <span class="s">"Microsoft.SkypeApp"</span>,
+    <span class="s">"Microsoft.Advertising.Xaml"</span>,
+    <span class="s">"Microsoft.549981C3F5F10"</span>,     <span class="c"># Cortana</span>
+    <span class="s">"Microsoft.WindowsFeedbackHub"</span>,
+    <span class="s">"Microsoft.YourPhone"</span>,
+    <span class="s">"Microsoft.People"</span>,
+    <span class="s">"Microsoft.WindowsMaps"</span>
+)
+
+<span class="k">foreach</span> (<span class="v">$app</span> <span class="k">in</span> <span class="v">$AppsToRemove</span>) {
+
+    <span class="c"># Rimuovi per tutti gli utenti esistenti</span>
+    <span class="f">Get-AppxPackage</span> <span class="n">-Name</span> <span class="v">$app</span> <span class="n">-AllUsers</span> | <span class="f">Remove-AppxPackage</span> <span class="n">-AllUsers</span> <span class="n">-ErrorAction</span> SilentlyContinue
+
+    <span class="c"># Rimuovi dal provisioning (nuovi utenti non la riceveranno)</span>
+    <span class="f">Get-AppxProvisionedPackage</span> <span class="n">-Online</span> | <span class="f">Where-Object</span> { <span class="v">$_</span>.DisplayName <span class="n">-like</span> <span class="s">"*$app*"</span> } |
+        <span class="f">Remove-AppxProvisionedPackage</span> <span class="n">-Online</span> <span class="n">-ErrorAction</span> SilentlyContinue
+
+    <span class="f">Write-Host</span> <span class="s">"[✓] Rimossa: $app"</span> <span class="n">-ForegroundColor</span> DarkGray
+}
+
+<span class="c"># Disabilita suggerimenti e telemetria aggiuntiva</span>
+<span class="f">Set-ItemProperty</span> <span class="n">-Path</span> <span class="s">"HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent"</span> `
+    <span class="n">-Name</span> <span class="s">"DisableWindowsConsumerFeatures"</span> <span class="n">-Value</span> <span class="k">1</span> <span class="n">-Type</span> DWord <span class="n">-Force</span>
+
+<span class="f">Write-Host</span> <span class="s">"`n[DONE] Bloatware rimosso."</span> <span class="n">-ForegroundColor</span> Green</pre>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-content">
+        <strong>Attenzione: Windows Update dopo rimozione</strong>
+        Alcune app UWP rimosse vengono reinstallate da Windows Update. Per evitarlo, usa NTLite (Step 09) per rimuoverle direttamente dall'immagine WIM, oppure blocca il loro re-provisioning con policy di gruppo.
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · REGISTRY & POLICY -->
+  <section class="section" id="registry">
+    <div class="section-header">
+      <div class="step-badge purple">06</div>
+      <div class="section-title-wrap">
+        <h2>Registry & Group Policy</h2>
+        <div class="subtitle">Ottimizzazioni di sistema, privacy e impostazioni aziendali</div>
+      </div>
+    </div>
+
+    <h3>Tweaks di sistema via Registry</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">POWERSHELL · System-Tweaks.ps1</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c"># ============================================
+# Ottimizzazioni Registry per immagine custom
+# ============================================</span>
+
+<span class="c"># ── PRIVACY & TELEMETRIA ─────────────────────</span>
+<span class="c"># Disabilita telemetria (0=Security, 1=Basic)</span>
+<span class="f">Set-ItemProperty</span> <span class="s">"HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection"</span> `
+    <span class="s">"AllowTelemetry"</span> <span class="k">0</span> <span class="n">-Type</span> DWord <span class="n">-Force</span>
+
+<span class="c"># Disabilita advertising ID</span>
+<span class="f">Set-ItemProperty</span> <span class="s">"HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo"</span> `
+    <span class="s">"DisabledByGroupPolicy"</span> <span class="k">1</span> <span class="n">-Type</span> DWord <span class="n">-Force</span>
+
+<span class="c"># ── PERFORMANCE ──────────────────────────────</span>
+<span class="c"># Disabilita search index per disco SSD (opzionale)</span>
+<span class="f">Set-ItemProperty</span> <span class="s">"HKLM:\SYSTEM\CurrentControlSet\Services\WSearch"</span> `
+    <span class="s">"Start"</span> <span class="k">4</span> <span class="n">-Type</span> DWord  <span class="c"># 4 = Disabled</span>
+
+<span class="c"># Imposta Power Plan su "High Performance"</span>
+<span class="f">powercfg</span> <span class="n">/setactive</span> 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
+
+<span class="c"># ── UI & EXPLORER ────────────────────────────</span>
+<span class="c"># Mostra estensioni file nel Explorer</span>
+<span class="f">Set-ItemProperty</span> <span class="s">"HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"</span> `
+    <span class="s">"HideFileExt"</span> <span class="k">0</span> <span class="n">-Type</span> DWord
+
+<span class="c"># Mostra file nascosti</span>
+<span class="f">Set-ItemProperty</span> <span class="s">"HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"</span> `
+    <span class="s">"Hidden"</span> <span class="k">1</span> <span class="n">-Type</span> DWord
+
+<span class="c"># Apri Explorer su "Questo PC" invece di "Accesso rapido"</span>
+<span class="f">Set-ItemProperty</span> <span class="s">"HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"</span> `
+    <span class="s">"LaunchTo"</span> <span class="k">1</span> <span class="n">-Type</span> DWord
+
+<span class="c"># Disabilita Widgets (Windows 11)</span>
+<span class="f">Set-ItemProperty</span> <span class="s">"HKLM:\SOFTWARE\Policies\Microsoft\Dsh"</span> `
+    <span class="s">"AllowNewsAndInterests"</span> <span class="k">0</span> <span class="n">-Type</span> DWord <span class="n">-Force</span>
+
+<span class="c"># Disabilita Chat (Teams Personal taskbar - Win11)</span>
+<span class="f">Set-ItemProperty</span> <span class="s">"HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Chat"</span> `
+    <span class="s">"ChatIcon"</span> <span class="k">3</span> <span class="n">-Type</span> DWord <span class="n">-Force</span>
+
+<span class="c"># ── WINDOWS UPDATE ────────────────────────────</span>
+<span class="c"># Pausa aggiornamenti automatici (business image)</span>
+<span class="f">Set-ItemProperty</span> <span class="s">"HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"</span> `
+    <span class="s">"NoAutoUpdate"</span> <span class="k">1</span> <span class="n">-Type</span> DWord <span class="n">-Force</span>
+
+<span class="f">Write-Host</span> <span class="s">"[DONE] Registry tweaks applicati."</span> <span class="n">-ForegroundColor</span> Green</pre>
+    </div>
+
+    <h3>Importa impostazioni come .reg file</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">CMD · Importa file .reg silenziosamente</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c">REM Importa reg file senza prompt conferma</span>
+<span class="f">reg</span> <span class="f">import</span> <span class="o">"C:\Setup\tweaks.reg"</span> <span class="n">/reg:64</span>
+
+<span class="c">REM Esempio tweaks.reg content:</span>
+<span class="c">REM Windows Registry Editor Version 5.00
+REM [HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DataCollection]
+REM "AllowTelemetry"=dword:00000000</span></pre>
+    </div>
+  </section>
+
+  <!-- 07 · SYSPREP -->
+  <section class="section" id="sysprep">
+    <div class="section-header">
+      <div class="step-badge green">07</div>
+      <div class="section-title-wrap">
+        <h2>Sysprep & Generalizzazione</h2>
+        <div class="subtitle">Passaggio critico prima dell'acquisizione dell'immagine</div>
+      </div>
+    </div>
+
+    <p>Sysprep <strong>generalizza</strong> l'immagine rimuovendo identificatori univoci (SID, nome computer, licenza hardware) e la rende deployabile su hardware diverso. È un passaggio <strong>obbligatorio</strong> e <strong>irreversibile</strong>: fai uno snapshot prima.</p>
+
+    <div class="callout danger">
+      <div class="callout-icon">🛑</div>
+      <div class="callout-content">
+        <strong>SNAPSHOT prima di Sysprep</strong>
+        Sysprep è irreversibile sulla VM. Crea <strong>Snapshot #3: "Pre-Sysprep FINAL"</strong> prima di procedere. Questo ti permette di tornare indietro se l'unattend.xml ha errori.
+      </div>
+    </div>
+
+    <h3>Preparazione pre-Sysprep</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">POWERSHELL · Pre-Sysprep Cleanup</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c"># Pulizia prima di Sysprep</span>
+
+<span class="c"># Svuota cestino</span>
+<span class="f">Clear-RecycleBin</span> <span class="n">-Force</span> <span class="n">-ErrorAction</span> SilentlyContinue
+
+<span class="c"># Pulisci Windows Update cache</span>
+<span class="f">Stop-Service</span> wuauserv <span class="n">-Force</span>
+<span class="f">Remove-Item</span> <span class="s">"C:\Windows\SoftwareDistribution\Download\*"</span> <span class="n">-Recurse</span> <span class="n">-Force</span> <span class="n">-ErrorAction</span> SilentlyContinue
+<span class="f">Start-Service</span> wuauserv
+
+<span class="c"># Pulisci temp files</span>
+<span class="f">Remove-Item</span> <span class="s">"C:\Windows\Temp\*"</span> <span class="n">-Recurse</span> <span class="n">-Force</span> <span class="n">-ErrorAction</span> SilentlyContinue
+<span class="f">Remove-Item</span> <span class="s">"$env:TEMP\*"</span>        <span class="n">-Recurse</span> <span class="n">-Force</span> <span class="n">-ErrorAction</span> SilentlyContinue
+
+<span class="c"># Rimuovi cartella C:\Setup (non serve nell'immagine finale)</span>
+<span class="c"># Remove-Item "C:\Setup" -Recurse -Force  # Decommentare quando pronto</span>
+
+<span class="c"># Pulizia Disk (silenzioso)</span>
+<span class="f">cleanmgr</span> <span class="n">/sagerun:1</span>
+
+<span class="c"># Deframmenta (solo HDD, non SSD)</span>
+<span class="c"># defrag C: /U /V</span>
+
+<span class="f">Write-Host</span> <span class="s">"[DONE] Sistema pronto per Sysprep."</span> <span class="n">-ForegroundColor</span> Green</pre>
+    </div>
+
+    <h3>Esecuzione Sysprep</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">CMD · Sysprep con Unattend.xml</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c">REM Posiziona l'unattend.xml in C:\Windows\System32\Sysprep\</span>
+<span class="c">REM poi esegui dal CMD con privilegi Administrator:</span>
+
+<span class="f">cd</span> <span class="o">C:\Windows\System32\Sysprep</span>
+
+<span class="c">REM Generalizza + Shutdown (per acquisire immagine)</span>
+<span class="f">sysprep.exe</span> <span class="n">/oobe</span> <span class="n">/generalize</span> <span class="n">/shutdown</span> <span class="n">/unattend:unattend.xml</span>
+
+<span class="c">REM Oppure /reboot per riavviare invece di spegnere</span>
+<span class="c">REM /oobe = mostra OOBE al primo avvio (ma skippa se configurato in XML)</span>
+<span class="c">REM /generalize = rimuove SID e info hardware-specifiche</span>
+<span class="c">REM /shutdown = spegne la VM dopo la generalizzazione</span></pre>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-content">
+        <strong>Cosa fa /generalize</strong>
+        Rimuove il Security ID (SID) univoco, le informazioni di attivazione hardware-bound, i log di evento, i certificati di sistema e i punti di ripristino. La VM risultante non è più avviabile normalmente, ma è pronta per essere catturata come immagine.
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 · ISO EXPORT -->
+  <section class="section" id="iso-export">
+    <div class="section-header">
+      <div class="step-badge green">08</div>
+      <div class="section-title-wrap">
+        <h2>Esportazione ISO</h2>
+        <div class="subtitle">Acquisizione immagine WIM e creazione ISO avviabile</div>
+      </div>
+    </div>
+
+    <p>Dopo che Sysprep ha spento la VM, il disco virtuale contiene l'immagine generalizzata. Dobbiamo: <strong>1)</strong> catturare la partizione Windows in un file WIM, <strong>2)</strong> iniettarlo nella struttura della ISO originale, <strong>3)</strong> creare la ISO avviabile.</p>
+
+    <h3>Metodo A — Acquisizione tramite Windows PE + DISM</h3>
+    <p>Avvia la VM con una ISO di <strong>Windows PE</strong> o usa l'ambiente WinRE. Da lì monta il disco della VM e acquisici l'immagine.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">CMD · Acquisizione immagine WIM con DISM (da WinPE)</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c">REM Da WinPE, identifica la lettera del drive Windows:</span>
+<span class="f">diskpart</span>
+<span class="c">  list disk
+  select disk 0
+  list volume
+  exit</span>
+
+<span class="c">REM Cattura l'immagine del volume Windows (es. D:) in WIM</span>
+<span class="f">dism</span> <span class="n">/Capture-Image</span> `
+     <span class="n">/ImageFile:</span><span class="o">E:\custom_windows.wim</span> `
+     <span class="n">/CaptureDir:</span><span class="o">D:\</span> `
+     <span class="n">/Name:</span><span class="s">"Windows 11 Pro Custom"</span> `
+     <span class="n">/Description:</span><span class="s">"Immagine custom aziendale v1.0"</span> `
+     <span class="n">/Compress:maximum</span> `
+     <span class="n">/CheckIntegrity</span>
+
+<span class="c">REM Nota: E: deve essere un disco separato o USB dove salvare il WIM</span></pre>
+    </div>
+
+    <h3>Metodo B — Acquisizione dall'host VMware (consigliato)</h3>
+    <p>Dopo lo shutdown della VM da Sysprep, monta il VMDK direttamente sull'host usando <strong>VMware Disk Mount Utility</strong> o monta il VMDK come disco aggiuntivo in un'altra VM con WinPE.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">CMD · Monta VMDK su host Windows con VMware DiskMount</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c">REM VMware DiskMount Utility (vmware-mount.exe)</span>
+<span class="c">REM Disponibile con VMware Workstation Pro</span>
+
+<span class="f">vmware-mount.exe</span> <span class="o">"C:\VMs\WindowsCustom\WindowsCustom.vmdk"</span> <span class="o">K:</span>
+
+<span class="c">REM Ora K: è il disco della VM, acquisisci con DISM dall'host:</span>
+<span class="f">dism</span> <span class="n">/Capture-Image</span> <span class="n">/ImageFile:</span><span class="o">D:\custom_windows.wim</span> `
+     <span class="n">/CaptureDir:</span><span class="o">K:\</span> `
+     <span class="n">/Name:</span><span class="s">"Windows 11 Pro Custom"</span> `
+     <span class="n">/Compress:maximum</span>
+
+<span class="c">REM Smonta dopo acquisizione</span>
+<span class="f">vmware-mount.exe</span> <span class="o">K:</span> <span class="n">/d</span></pre>
+    </div>
+
+    <h3>Struttura ISO originale + sostituzione install.wim</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">POWERSHELL · Crea ISO avviabile con oscdimg</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c"># 1. Estrai la ISO originale di Windows in una cartella</span>
+<span class="c">#    (usa 7-Zip o monta la ISO e copia i file)</span>
+<span class="v">$ISORoot</span>   = <span class="s">"D:\ISO_Build"</span>
+<span class="v">$CustomWIM</span> = <span class="s">"D:\custom_windows.wim"</span>
+
+<span class="c"># 2. Sostituisci install.wim (o install.esd) con la tua immagine</span>
+<span class="f">Copy-Item</span> <span class="v">$CustomWIM</span> <span class="s">"$ISORoot\sources\install.wim"</span> <span class="n">-Force</span>
+
+<span class="c"># 3. (Opzionale) Copia unattend.xml nella ISO per auto-deployment</span>
+<span class="f">Copy-Item</span> <span class="s">"D:\unattend.xml"</span> <span class="s">"$ISORoot\sources\unattend.xml"</span> <span class="n">-Force</span>
+
+<span class="c"># 4. Crea ISO avviabile con oscdimg (parte di Windows ADK)</span>
+<span class="c">#    Installa ADK da: https://learn.microsoft.com/windows-hardware/get-started/adk-install</span>
+<span class="v">$oscdimg</span> = <span class="s">"C:\Program Files (x86)\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\amd64\Oscdimg\oscdimg.exe"</span>
+<span class="v">$OutputISO</span> = <span class="s">"D:\Windows11_Custom_v1.iso"</span>
+<span class="v">$BootData</span>  = <span class="s">"2#p0,e,b`"$ISORoot\boot\etfsboot.com`"#pEF,e,b`"$ISORoot\efi\Microsoft\boot\efisys.bin`""</span>
+
+<span class="k">&</span> <span class="v">$oscdimg</span> <span class="n">-m</span> <span class="n">-o</span> <span class="n">-u2</span> <span class="n">-udfver102</span> `
+           <span class="n">-bootdata:</span><span class="v">$BootData</span> `
+           <span class="v">$ISORoot</span> `
+           <span class="v">$OutputISO</span>
+
+<span class="f">Write-Host</span> <span class="s">"[DONE] ISO creata: $OutputISO"</span> <span class="n">-ForegroundColor</span> Green</pre>
+    </div>
+
+    <div class="callout success">
+      <div class="callout-icon">✅</div>
+      <div class="callout-content">
+        <strong>Test della ISO in VMware</strong>
+        Prima di distribuire, testa sempre la ISO in una <strong>nuova VM pulita</strong> in VMware: crea VM → monta la ISO custom → verifica che l'installazione proceda correttamente, gli utenti vengano creati e il software sia presente.
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 · NTLITE -->
+  <section class="section" id="ntlite">
+    <div class="section-header">
+      <div class="step-badge purple">09</div>
+      <div class="section-title-wrap">
+        <h2>NTLite — Editing Avanzato Immagine</h2>
+        <div class="subtitle">Rimozione componenti, integrazione driver e aggiornamenti</div>
+      </div>
+    </div>
+
+    <p><strong>NTLite</strong> ti permette di modificare l'immagine WIM <em>offline</em> (senza avviarla): rimuovere feature Windows, integrare driver, applicare aggiornamenti cumulativi e configurare impostazioni avanzate. La versione Free copre le funzioni di base; la versione a pagamento sblocca automazione e task XML.</p>
+
+    <h3>Workflow NTLite</h3>
+    <ol class="steps-list">
+      <li><strong>Aggiungi immagine</strong>: File → Add → Image file → seleziona <code>install.wim</code> dalla ISO estratta.</li>
+      <li><strong>Carica l'edizione</strong>: Doppio click sull'edizione desiderata (es. "Windows 11 Pro") per montarla.</li>
+      <li><strong>Components</strong>: Naviga l'albero delle componenti → rimuovi quelle non necessarie (Internet Explorer, Media Player legacy, Tablet components, etc.).</li>
+      <li><strong>Updates</strong>: Integra aggiornamenti cumulativi in formato <code>.msu</code> o <code>.cab</code> scaricati da Microsoft Update Catalog.</li>
+      <li><strong>Drivers</strong>: Integra driver (cartella con .inf) per hardware specifico.</li>
+      <li><strong>Unattend</strong>: Configura il file di risposta direttamente da NTLite (GUI per unattend.xml).</li>
+      <li><strong>Apply</strong>: Avvia l'elaborazione → NTLite salva il WIM modificato.</li>
+    </ol>
+
+    <h3>Componenti consigliati da rimuovere con NTLite</h3>
+    <table class="data-table">
+      <thead><tr><th>Componente</th><th>Percorso in NTLite</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Internet Explorer</td><td>Components → Browsers</td><td>Deprecato, non serve</td></tr>
+        <tr><td>Windows Media Player (legacy)</td><td>Components → Multimedia</td><td>UWP Media è il sostituto</td></tr>
+        <tr><td>WordPad</td><td>Components → Desktop Apps</td><td>Rimosso da Win11 23H2+</td></tr>
+        <tr><td>Windows Fax and Scan</td><td>Components → Communication</td><td>Raramente usato</td></tr>
+        <tr><td>XPS Services</td><td>Components → Printing</td><td>Se si usa solo PDF</td></tr>
+        <tr><td>OneDrive (built-in)</td><td>Components → OneDrive</td><td>Se non in uso aziendale</td></tr>
+        <tr><td>Microsoft Store</td><td>Components → Windows Store</td><td>⚠️ Solo se sicuri, può rompere UWP</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Automazione NTLite tramite XML preset</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">CMD · Applica preset NTLite da command line</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c">REM NTLite supporta automazione tramite preset .xml</span>
+<span class="c">REM Crea il preset dalla GUI, poi esegui:</span>
+
+<span class="f">NTLite.exe</span> <span class="n">/process</span> <span class="s">"C:\NTLite\preset_azienda.xml"</span>
+
+<span class="c">REM Il preset XML definisce:
+REM - Immagine sorgente
+REM - Componenti da rimuovere
+REM - Updates da integrare
+REM - Output WIM path</span></pre>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-content">
+        <strong>NTLite vs Post-Sysprep</strong>
+        NTLite lavora sull'immagine WIM <em>offline</em>, quindi può essere usato sia <strong>prima</strong> di installare nella VM (per preparare l'ISO base) che <strong>dopo</strong> aver acquisito l'immagine customizzata. L'approccio ideale è usarlo in entrambi i passaggi.
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · DISMTOOLS -->
+  <section class="section" id="dismtools">
+    <div class="section-header">
+      <div class="step-badge purple">10</div>
+      <div class="section-title-wrap">
+        <h2>DISMTools — Gestione Immagine</h2>
+        <div class="subtitle">GUI per DISM: montaggio, patch, conversione ESD/WIM</div>
+      </div>
+    </div>
+
+    <p><strong>DISMTools</strong> è una GUI per il tool DISM integrato in Windows, che semplifica operazioni complesse come montaggio immagini, integrazione aggiornamenti, verifica integrità e conversione tra formati.</p>
+
+    <h3>Operazioni principali in DISMTools</h3>
+    <ol class="steps-list">
+      <li><strong>Mount Image</strong>: Monta un WIM/ESD in una cartella per modificarlo offline (equivale a <code>dism /Mount-Image</code>).</li>
+      <li><strong>Add Packages</strong>: Integra update .msu o .cab nell'immagine montata.</li>
+      <li><strong>Add Drivers</strong>: Inietta driver .inf nell'immagine.</li>
+      <li><strong>Cleanup Image</strong>: Riduce le dimensioni rimuovendo componenti superseded.</li>
+      <li><strong>Unmount Image</strong>: Smonta salvando le modifiche (commit) o scartandole.</li>
+      <li><strong>Export Image</strong>: Esporta in WIM compresso massimo per ridurre dimensioni.</li>
+      <li><strong>Convert ESD→WIM</strong>: Necessario se la ISO usa install.esd invece di install.wim.</li>
+    </ol>
+
+    <h3>Comandi DISM equivalenti da riga di comando</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">CMD / PowerShell · Operazioni DISM principali</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c">REM ── MONTA IMMAGINE ────────────────────────────</span>
+<span class="f">dism</span> <span class="n">/Mount-Image</span> <span class="n">/ImageFile:</span><span class="o">D:\install.wim</span> `
+     <span class="n">/index:1</span> <span class="n">/MountDir:</span><span class="o">D:\Mount</span> <span class="n">/ReadWrite</span>
+
+<span class="c">REM ── VISUALIZZA INFORMAZIONI ─────────────────</span>
+<span class="f">dism</span> <span class="n">/Get-ImageInfo</span> <span class="n">/ImageFile:</span><span class="o">D:\install.wim</span>
+
+<span class="c">REM ── INTEGRA AGGIORNAMENTO ───────────────────</span>
+<span class="f">dism</span> <span class="n">/Image:</span><span class="o">D:\Mount</span> <span class="n">/Add-Package</span> `
+     <span class="n">/PackagePath:</span><span class="o">D:\Updates\windows11-kb5034123.msu</span>
+
+<span class="c">REM ── AGGIUNGI DRIVER ─────────────────────────</span>
+<span class="f">dism</span> <span class="n">/Image:</span><span class="o">D:\Mount</span> <span class="n">/Add-Driver</span> `
+     <span class="n">/Driver:</span><span class="o">D:\Drivers\</span> <span class="n">/Recurse</span>
+
+<span class="c">REM ── CLEANUP (riduce size) ───────────────────</span>
+<span class="f">dism</span> <span class="n">/Image:</span><span class="o">D:\Mount</span> <span class="n">/Cleanup-Image</span> <span class="n">/StartComponentCleanup</span> <span class="n">/ResetBase</span>
+
+<span class="c">REM ── SMONTA E SALVA ──────────────────────────</span>
+<span class="f">dism</span> <span class="n">/Unmount-Image</span> <span class="n">/MountDir:</span><span class="o">D:\Mount</span> <span class="n">/Commit</span>
+
+<span class="c">REM ── ESPORTA (compressione massima) ──────────</span>
+<span class="f">dism</span> <span class="n">/Export-Image</span> <span class="n">/SourceImageFile:</span><span class="o">D:\install.wim</span> `
+     <span class="n">/SourceIndex:1</span> <span class="n">/DestinationImageFile:</span><span class="o">D:\install_compressed.wim</span> `
+     <span class="n">/Compress:max</span>
+
+<span class="c">REM ── CONVERTI ESD → WIM ──────────────────────</span>
+<span class="f">dism</span> <span class="n">/Export-Image</span> <span class="n">/SourceImageFile:</span><span class="o">D:\install.esd</span> `
+     <span class="n">/SourceIndex:1</span> <span class="n">/DestinationImageFile:</span><span class="o">D:\install.wim</span> `
+     <span class="n">/Compress:max</span> <span class="n">/CheckIntegrity</span>
+
+<span class="c">REM ── VERIFICA INTEGRITÀ ──────────────────────</span>
+<span class="f">dism</span> <span class="n">/Check-ImageHealth</span> <span class="n">/ImageFile:</span><span class="o">D:\install.wim</span></pre>
+    </div>
+
+    <h3>Aggiungi unattend.xml all'immagine montata</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">CMD · Inietta unattend.xml nell'immagine montata</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c">REM Copia l'unattend.xml nella posizione corretta dell'immagine montata</span>
+<span class="f">copy</span> <span class="o">D:\unattend.xml</span> <span class="o">D:\Mount\Windows\Panther\unattend.xml</span>
+
+<span class="c">REM Questa posizione è letta automaticamente da Windows Setup</span>
+<span class="c">REM senza bisogno di specificarla nella riga di comando sysprep</span></pre>
+    </div>
+  </section>
+
+  <!-- 11 · FINAL CHECKLIST -->
+  <section class="section" id="final">
+    <div class="section-header">
+      <div class="step-badge green">11</div>
+      <div class="section-title-wrap">
+        <h2>Checklist Finale & Best Practice</h2>
+        <div class="subtitle">Tutto ciò che non deve mancare prima della distribuzione</div>
+      </div>
+    </div>
+
+    <h3>Checklist pre-distribuzione</h3>
+    <ol class="steps-list">
+      <li><strong>VM testata</strong>: La ISO è stata installata in una VM di test pulita senza errori.</li>
+      <li><strong>Utenti verificati</strong>: Tutti gli account creati correttamente con permessi giusti.</li>
+      <li><strong>Software verificato</strong>: Tutte le applicazioni funzionano al primo avvio, shortcut corretti.</li>
+      <li><strong>Bloatware rimosso</strong>: Nessuna app UWP indesiderata presente nel menu Start.</li>
+      <li><strong>Cartelle create</strong>: Struttura directory presente in nuovo profilo utente.</li>
+      <li><strong>Sfondo/tema</strong>: Wallpaper aziendale applicato correttamente.</li>
+      <li><strong>Dimensione ISO</strong>: Verificata e ottimizzata (WIM esportato con compressione massima).</li>
+      <li><strong>UEFI/Legacy boot</strong>: ISO avviabile sia in UEFI che Legacy BIOS se necessario.</li>
+      <li><strong>Unattend.xml validato</strong>: Usa Windows SIM (parte di ADK) per validare il file XML.</li>
+      <li><strong>Log esaminati</strong>: Controlla <code>C:\Windows\Panther\setupact.log</code> e <code>setuperr.log</code> dopo test.</li>
+    </ol>
+
+    <h3>Validazione unattend.xml con Windows SIM</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">CMD · Valida unattend.xml (Windows ADK)</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c">REM Windows System Image Manager (parte di Windows ADK)</span>
+<span class="c">REM Percorso tipico dopo installazione ADK:</span>
+<span class="o">"C:\Program Files (x86)\Windows Kits\10\Assessment and Deployment Kit\Windows System Image Manager\wsim.exe"</span>
+
+<span class="c">REM Oppure valida con DISM:</span>
+<span class="f">dism</span> <span class="n">/Image:</span><span class="o">D:\Mount</span> <span class="n">/Apply-Unattend:</span><span class="o">D:\unattend.xml</span>
+<span class="c">REM Utile per verificare che l'XML non contenga errori di sintassi</span></pre>
+    </div>
+
+    <h3>Script setup completo (master launcher)</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">POWERSHELL · Master-Setup.ps1 — Lancia tutto in sequenza</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <pre><span class="c"># ============================================
+# MASTER SETUP SCRIPT
+# Da eseguire come Administrator nella VM
+# dopo installazione Windows, prima di Sysprep
+# ============================================</span>
+
+<span class="v">$Steps</span> = <span class="k">@</span>(
+    <span class="k">@</span>{<span class="s">"Name"</span>=<span class="s">"Cartelle Default"</span>;   <span class="s">"Script"</span>=<span class="s">"C:\Setup\Setup-DefaultFolders.ps1"</span>},
+    <span class="k">@</span>{<span class="s">"Name"</span>=<span class="s">"Rimozione Bloatware"</span>; <span class="s">"Script"</span>=<span class="s">"C:\Setup\Remove-Bloatware.ps1"</span>},
+    <span class="k">@</span>{<span class="s">"Name"</span>=<span class="s">"Installazione SW"</span>;    <span class="s">"Script"</span>=<span class="s">"C:\Setup\Install-Software.ps1"</span>},
+    <span class="k">@</span>{<span class="s">"Name"</span>=<span class="s">"Registry Tweaks"</span>;    <span class="s">"Script"</span>=<span class="s">"C:\Setup\System-Tweaks.ps1"</span>}
+)
+
+<span class="k">foreach</span> (<span class="v">$step</span> <span class="k">in</span> <span class="v">$Steps</span>) {
+    <span class="f">Write-Host</span> <span class="s">"`n━━━ $($step.Name) ━━━"</span> <span class="n">-ForegroundColor</span> Cyan
+    <span class="k">if</span> (<span class="f">Test-Path</span> <span class="v">$step</span>.Script) {
+        <span class="k">&</span> <span class="v">$step</span>.Script
+    } <span class="k">else</span> {
+        <span class="f">Write-Warning</span> <span class="s">"Script non trovato: $($step.Script)"</span>
+    }
+}
+
+<span class="c"># Snapshot consigliato prima di procedere con Sysprep</span>
+<span class="f">Write-Host</span> <span class="s">"`n[!] CREA SNAPSHOT ORA prima di Sysprep!"</span> <span class="n">-ForegroundColor</span> Yellow
+<span class="f">Read-Host</span> <span class="s">"Premi INVIO quando pronto per Sysprep..."</span>
+
+<span class="c"># Pulizia finale</span>
+<span class="f">Remove-Item</span> <span class="s">"C:\Windows\Temp\*"</span>   <span class="n">-Recurse</span> <span class="n">-Force</span> <span class="n">-ErrorAction</span> SilentlyContinue
+<span class="f">Remove-Item</span> <span class="s">"$env:TEMP\*"</span>          <span class="n">-Recurse</span> <span class="n">-Force</span> <span class="n">-ErrorAction</span> SilentlyContinue
+
+<span class="c"># Lancia Sysprep</span>
+<span class="f">Start-Process</span> <span class="s">"C:\Windows\System32\Sysprep\sysprep.exe"</span> `
+    <span class="n">-ArgumentList</span> <span class="s">"/oobe /generalize /shutdown /unattend:C:\Windows\System32\Sysprep\unattend.xml"</span> `
+    <span class="n">-Wait</span></pre>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3>Risorse di riferimento</h3>
+    <table class="data-table">
+      <thead><tr><th>Risorsa</th><th>URL / Nota</th></tr></thead>
+      <tbody>
+        <tr><td>Windows ADK</td><td><code>https://learn.microsoft.com/windows-hardware/get-started/adk-install</code></td></tr>
+        <tr><td>BCUninstaller</td><td><code>https://www.bcuninstaller.com</code></td></tr>
+        <tr><td>NTLite</td><td><code>https://www.ntlite.com</code></td></tr>
+        <tr><td>DISMTools</td><td><code>https://dismtools.com</code></td></tr>
+        <tr><td>Microsoft Update Catalog</td><td><code>https://www.catalog.update.microsoft.com</code> (download .msu)</td></tr>
+        <tr><td>Unattend.xml Reference</td><td><code>https://learn.microsoft.com/windows-hardware/customize/desktop/unattend/</code></td></tr>
+        <tr><td>Sysprep Technical Reference</td><td><code>https://learn.microsoft.com/windows-hardware/manufacture/desktop/sysprep--system-preparation--overview</code></td></tr>
+        <tr><td>Office Deployment Tool</td><td><code>https://www.microsoft.com/en-us/download/details.aspx?id=49117</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout success">
+      <div class="callout-icon">🚀</div>
+      <div class="callout-content">
+        <strong>Workflow riepilogativo</strong>
+        VM Setup → Install Windows → VMware Tools → Snapshot #1 → Rimuovi Bloatware → Installa SW → Configura Utenti/Cartelle/Registry → Snapshot #2 → Sysprep → Acquisisci WIM → (NTLite/DISM post-processing) → Crea ISO → Test in VM pulita → Distribuzione.
+      </div>
+    </div>
+
+  </section>
+
+</main>
+</body>
+</html>
